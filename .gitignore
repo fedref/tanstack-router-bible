@@ -1,0 +1,13 @@
+# dependencies
+**/node_modules
+
+# build output
+**/dist
+
+# 플러그인이 자동 생성 (CI에서 재생성)
+app/src/routeTree.gen.ts
+
+# misc
+.DS_Store
+*.local
+**/.tanstack
