@@ -1,7 +1,7 @@
 # 04 · 데이터 로딩 / 변경
 
 > 대응 예제: `/data`, `/data/basics`, `/data/deps`, `/data/mutations`
-> 예제 파일: `app/src/routes/data*.tsx`, `app/src/lib/todos.ts`
+> 예제 파일: `apps/bible/src/routes/data*.tsx`, `apps/bible/src/lib/todos.ts`
 > 📖 공식: [data-loading](https://tanstack.com/router/latest/docs/framework/react/guide/data-loading) ·
 > [data-mutations](https://tanstack.com/router/latest/docs/framework/react/guide/data-mutations)
 

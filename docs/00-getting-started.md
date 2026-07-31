@@ -1,6 +1,6 @@
 # 00 · Getting Started
 
-> 대응 예제: `app/` 전체 (특히 `vite.config.ts`, `src/main.tsx`, `src/routes/__root.tsx`)
+> 대응 예제: `apps/bible/` 전체 (특히 `vite.config.ts`, `src/main.tsx`, `src/routes/__root.tsx`)
 > 📖 공식: [overview](https://tanstack.com/router/latest/docs/framework/react/overview) ·
 > [decisions-on-dx](https://tanstack.com/router/latest/docs/framework/react/decisions-on-dx) ·
 > [installation/with-vite](https://tanstack.com/router/latest/docs/framework/react/installation/with-vite)
@@ -50,7 +50,7 @@ pnpm add @tanstack/react-query
 pnpm add -D @tanstack/react-query-devtools
 ```
 
-이 저장소는 이미 다 깔려 있다 → [`app/package.json`](../app/package.json). 디자인 쪽은
+이 저장소는 이미 다 깔려 있다 → [`apps/bible/package.json`](../apps/bible/package.json). 디자인 쪽은
 `shadcn/ui`(Base UI 기반) + Tailwind v4 를 함께 쓰지만, 라우터 학습과는 독립적이니 지금은
 신경 쓰지 않아도 된다.
 
@@ -62,7 +62,7 @@ pnpm add -D @tanstack/react-query-devtools
 이유가 여기 있다.
 
 ```ts
-// app/vite.config.ts
+// apps/bible/vite.config.ts
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 
 export default defineConfig({
@@ -85,7 +85,7 @@ export default defineConfig({
 이제 생성된 라우트 트리(`routeTree`)를 실제 라우터로 만들어 앱에 꽂는다.
 
 ```tsx
-// app/src/main.tsx (핵심 발췌)
+// apps/bible/src/main.tsx (핵심 발췌)
 const queryClient = new QueryClient()
 
 const router = createRouter({
@@ -150,5 +150,5 @@ declare module '@tanstack/react-router' {
 ## ▶ 실행 예제
 
 - 홈: `/` — Chapter 목차
-- 셋업 파일: [`app/vite.config.ts`](../app/vite.config.ts),
-  [`app/src/main.tsx`](../app/src/main.tsx), [`app/src/routes/__root.tsx`](../app/src/routes/__root.tsx)
+- 셋업 파일: [`apps/bible/vite.config.ts`](../apps/bible/vite.config.ts),
+  [`apps/bible/src/main.tsx`](../apps/bible/src/main.tsx), [`apps/bible/src/routes/__root.tsx`](../apps/bible/src/routes/__root.tsx)

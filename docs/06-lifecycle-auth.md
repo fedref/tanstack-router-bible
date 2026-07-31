@@ -1,7 +1,7 @@
 # 06 · 라이프사이클 & 인증
 
 > 대응 예제: `/auth`, `/auth/login`, `/auth/dashboard`(보호됨), `/auth/notfound`
-> 예제 파일: `app/src/routes/auth*.tsx`, `app/src/lib/auth.ts`
+> 예제 파일: `apps/bible/src/routes/auth*.tsx`, `apps/bible/src/lib/auth.ts`
 > 📖 공식: [authenticated-routes](https://tanstack.com/router/latest/docs/framework/react/guide/authenticated-routes) ·
 > [not-found-errors](https://tanstack.com/router/latest/docs/framework/react/guide/not-found-errors)
 

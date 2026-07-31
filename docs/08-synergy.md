@@ -1,7 +1,7 @@
 # 08 · 시너지 종합 — 미니 카탈로그
 
 > 대응 예제: `/kitchen-sink`, `/kitchen-sink/login`, `/kitchen-sink/$productId`
-> 예제 파일: `app/src/routes/kitchen-sink*.tsx`, `app/src/lib/queries.ts`
+> 예제 파일: `apps/bible/src/routes/kitchen-sink*.tsx`, `apps/bible/src/lib/queries.ts`
 > 📖 공식: [examples/kitchen-sink](https://tanstack.com/router/latest/docs/framework/react/examples/kitchen-sink-react-query-file-based)
 
 마지막 Chapter는 새 API를 배우지 않는다. 대신 **앞의 기능들을 하나의 흐름에 합쳐** 각 조각이

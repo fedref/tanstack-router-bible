@@ -1,0 +1,15 @@
+{
+  "name": "tanstack-router-bible",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.2",
+  "scripts": {
+    "dev": "pnpm --filter playground dev",
+    "dev:bible": "pnpm --filter bible dev",
+    "dev:playground": "pnpm --filter playground dev",
+    "build": "pnpm -r build",
+    "build:bible": "pnpm --filter bible build",
+    "build:playground": "pnpm --filter playground build",
+    "typecheck": "pnpm -r typecheck"
+  }
+}

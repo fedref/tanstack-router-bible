@@ -2,7 +2,7 @@
 
 > 대응 예제: `/params`, `/params/path`, `/params/path/$userId`, `/params/search`,
 > `/params/serialization`
-> 예제 파일: `app/src/routes/params*.tsx`
+> 예제 파일: `apps/bible/src/routes/params*.tsx`
 > 📖 공식: [path-params](https://tanstack.com/router/latest/docs/framework/react/guide/path-params) ·
 > [search-params](https://tanstack.com/router/latest/docs/framework/react/guide/search-params) ·
 > [custom-search-param-serialization](https://tanstack.com/router/latest/docs/framework/react/guide/custom-search-param-serialization)

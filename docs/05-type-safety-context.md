@@ -1,7 +1,7 @@
 # 05 · 타입 안전성 & 컨텍스트
 
 > 대응 예제: `/type-safety`, `/type-safety/context`, `/type-safety/utils`
-> 예제 파일: `app/src/routes/type-safety*.tsx`
+> 예제 파일: `apps/bible/src/routes/type-safety*.tsx`
 > 📖 공식: [type-safety](https://tanstack.com/router/latest/docs/framework/react/guide/type-safety) ·
 > [type-utilities](https://tanstack.com/router/latest/docs/framework/react/guide/type-utilities) ·
 > [router-context](https://tanstack.com/router/latest/docs/framework/react/guide/router-context)

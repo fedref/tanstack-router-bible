@@ -2,7 +2,7 @@
 
 > 대응 예제: `/navigation`, `/navigation/link`, `/navigation/imperative`,
 > `/navigation/preloading`, `/navigation/events`
-> 예제 파일: `app/src/routes/navigation*.tsx`
+> 예제 파일: `apps/bible/src/routes/navigation*.tsx`
 > 📖 공식: [navigation](https://tanstack.com/router/latest/docs/framework/react/guide/navigation) ·
 > [link-options](https://tanstack.com/router/latest/docs/framework/react/guide/link-options) ·
 > [custom-link](https://tanstack.com/router/latest/docs/framework/react/guide/custom-link) ·

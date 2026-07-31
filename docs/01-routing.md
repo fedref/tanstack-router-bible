@@ -1,7 +1,7 @@
 # 01 · 라우팅 기초
 
 > 대응 예제: `/routing`, `/routing/concepts`, `/routing/matching`, `/routing/matching/$productId`
-> 예제 파일: `app/src/routes/routing*.tsx`
+> 예제 파일: `apps/bible/src/routes/routing*.tsx`
 > 📖 공식: [routing-concepts](https://tanstack.com/router/latest/docs/framework/react/routing/routing-concepts) ·
 > [route-trees](https://tanstack.com/router/latest/docs/framework/react/routing/route-trees) ·
 > [route-matching](https://tanstack.com/router/latest/docs/framework/react/routing/route-matching) ·
@@ -46,7 +46,7 @@ src/routes/
 라우트 하나는 이렇게 단출하다.
 
 ```tsx
-// app/src/routes/index.tsx
+// apps/bible/src/routes/index.tsx
 import { createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/')({
@@ -85,7 +85,7 @@ export const Route = createFileRoute('/')({
 쌓인다. 위쪽 레이아웃은 자식이 바뀌어도 **그대로 유지되고**, `Outlet` 안쪽만 갈아 끼워진다.
 
 ```tsx
-// app/src/routes/routing.tsx (발췌)
+// apps/bible/src/routes/routing.tsx (발췌)
 export const Route = createFileRoute('/routing')({ component: RoutingLayout })
 
 function RoutingLayout() {
@@ -112,7 +112,7 @@ URL 중간에 "변하는 값"을 넣고 싶을 때 동적 세그먼트를 쓴다
 그 경로)과 `/routing/matching/123`(동적 자식)이 있으면, 각각에 맞는 라우트가 정확히 갈린다.
 
 ```tsx
-// app/src/routes/routing.matching.$productId.tsx (발췌)
+// apps/bible/src/routes/routing.matching.$productId.tsx (발췌)
 export const Route = createFileRoute('/routing/matching/$productId')({
   loader: ({ params }) => getProduct(params.productId), // 진입 전에 데이터 미리 로드 (Chapter 04 맛보기)
   component: ProductDetail,

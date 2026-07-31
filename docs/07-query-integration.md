@@ -1,7 +1,7 @@
 # 07 · TanStack Query 통합
 
 > 대응 예제: `/query`, `/query/prefetch`, `/query/search`, `/query/mutation`
-> 예제 파일: `app/src/routes/query*.tsx`, `app/src/lib/queries.ts`
+> 예제 파일: `apps/bible/src/routes/query*.tsx`, `apps/bible/src/lib/queries.ts`
 > 📖 공식: [integrations/query](https://tanstack.com/router/latest/docs/framework/react/integrations/query)
 
 Router 의 loader 는 "진입 전에 막고 받는" 데 강하고, TanStack Query 는 "받은 걸 캐시하고 여러
