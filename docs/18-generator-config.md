@@ -19,6 +19,94 @@
 
 옵션 이름과 의미는 **양쪽이 동일**하다. 아래 표는 두 방법 모두에 적용된다.
 
+## 번들러별 플러그인 설정
+
+`@tanstack/router-plugin` 하나에 번들러별 진입점이 들어 있다. **import 경로만 다르고
+옵션은 같다.**
+
+```bash
+pnpm add -D @tanstack/router-plugin
+```
+
+### Vite (이 저장소가 쓰는 방식)
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
+
+export default defineConfig({
+  plugins: [
+    // react() 앞에 두어야 생성된 트리를 react 플러그인이 인식한다
+    TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+    react(),
+  ],
+})
+```
+
+**플러그인 순서가 중요하다.** `react()` 뒤에 두면 생성된 `routeTree.gen.ts` 가 변환
+대상에서 빠질 수 있다.
+
+### Rspack / Rsbuild
+
+```ts
+// rspack.config.ts
+import { TanStackRouterRspack } from '@tanstack/router-plugin/rspack'
+
+export default {
+  plugins: [TanStackRouterRspack({ target: 'react', autoCodeSplitting: true })],
+}
+```
+
+환경변수 접두사가 Vite(`VITE_`)와 달리 **`PUBLIC_`** 이다(21장).
+
+### Webpack
+
+```ts
+// webpack.config.ts
+import { TanStackRouterWebpack } from '@tanstack/router-plugin/webpack'
+
+export default {
+  plugins: [TanStackRouterWebpack({ target: 'react', autoCodeSplitting: true })],
+}
+```
+
+Webpack 은 `import.meta.env` 를 기본 지원하지 않는다. 환경변수는 `DefinePlugin` 으로
+주입하고 `process.env` 로 읽는다.
+
+### Esbuild
+
+```ts
+// esbuild.config.ts
+import { TanStackRouterEsbuild } from '@tanstack/router-plugin/esbuild'
+
+export default {
+  plugins: [TanStackRouterEsbuild({ target: 'react', autoCodeSplitting: true })],
+}
+```
+
+### 번들러가 없을 때 — 수동 설치
+
+플러그인도 CLI도 쓸 수 없다면 **파일기반 라우팅을 포기하고 코드기반으로** 간다(17장).
+`routeTree.gen.ts` 없이 `createRoute` 로 직접 트리를 조립하는 방식이며, 생성 단계가
+사라지므로 어떤 빌드 도구에서도 동작한다.
+
+```bash
+pnpm add @tanstack/react-router
+# 생성기 관련 패키지는 필요 없다
+```
+
+```tsx
+const rootRoute = createRootRoute()
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/' })
+const routeTree = rootRoute.addChildren([indexRoute])
+export const router = createRouter({ routeTree })
+```
+
+보일러플레이트가 늘고 코드 스플리팅을 직접 설정해야 하지만(09장), **타입 안전성은
+동일하게 유지된다.**
+
 ## 설정 옵션 전수
 
 ```ts

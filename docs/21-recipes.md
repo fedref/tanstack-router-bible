@@ -21,7 +21,7 @@
 | 8 | [RBAC — 역할 기반 접근 제어](#8-rbac--역할-기반-접근-제어) | 05 · 06 |
 | 9 | [UI 라이브러리 통합](#9-ui-라이브러리-통합) | 16 |
 | 10 | [React Router에서 이사하기](#10-react-router에서-이사하기) | 01 · 02 |
-| 11 | [SSR 붙이기](#11-ssr-붙이기-) 🚫 | 16 · 17 |
+| 11 | [SSR 붙이기](#11-ssr-붙이기) 🚫 | 16 · 17 |
 
 ---
 
@@ -658,7 +658,26 @@ declare module '@tanstack/react-router' {
 3. `physical()` 로 새로 쓰는 영역만 파일기반 규칙 적용
 4. 안정되면 전체를 파일기반으로 정리
 
----
+### React Location 에서 오는 경우
+
+TanStack Router 의 **전신**이다. 같은 팀이 만들었고 Router 가 그 후속작이라, 공식
+마이그레이션 가이드가 따로 있다. 다만 React Location 은 더 이상 유지보수되지 않으므로
+새로 시작한다면 고려 대상이 아니다.
+
+주요 대응은 이렇다.
+
+| React Location | TanStack Router |
+|---|---|
+| `<Router routes={routes}>` | `createRouter({ routeTree })` |
+| `useMatch()` | `Route.useParams()` · `Route.useLoaderData()` |
+| `useSearch()` | `Route.useSearch()` — **검증된 값** |
+| `loader` | `loader` — 인자 형태가 다르다 |
+| `<Link to>` | `<Link to>` — 타입 안전해졌다 |
+
+가장 크게 달라진 것은 **search params 가 검증을 거친다**는 점이다(03장). React Location
+에서는 자유 형식이었으므로, 이사할 때 `validateSearch` 스키마를 새로 작성해야 한다.
+
+📖 [공식 가이드](https://tanstack.com/router/latest/docs/framework/react/installation/migrate-from-react-location)
 
 ---
 
@@ -678,9 +697,18 @@ declare module '@tanstack/react-router' {
 
 ### 서버 쪽 얼개
 
+SSR 컴포넌트는 **메인 진입점이 아니라 서브패스**에서 가져온다. 클라이언트 번들에
+서버 코드가 섞이지 않게 하려는 구조다.
+
+```
+@tanstack/react-router/ssr/server   → RouterServer
+@tanstack/react-router/ssr/client   → RouterClient
+```
+
 ```tsx
 // server.tsx
-import { createMemoryHistory, createRouter, RouterServer } from '@tanstack/react-router'
+import { createMemoryHistory, createRouter } from '@tanstack/react-router'
+import { RouterServer } from '@tanstack/react-router/ssr/server'
 
 export async function render(url: string) {
   const router = createRouter({
@@ -700,6 +728,9 @@ export async function render(url: string) {
 
 ```tsx
 // client.tsx
+import { createRouter } from '@tanstack/react-router'
+import { RouterClient } from '@tanstack/react-router/ssr/client'
+
 const router = createRouter({ routeTree })
 hydrateRoot(document, <RouterClient router={router} />)
 ```

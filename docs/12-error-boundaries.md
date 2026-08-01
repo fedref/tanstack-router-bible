@@ -212,7 +212,9 @@ export const Route = createFileRoute('/$')({
 `redirect()` 는 06장에서 다뤘다. 여기서는 **판별 함수**를 본다.
 
 ```tsx
-import { isRedirect, isNotFound, isResolvedRedirect } from '@tanstack/react-router'
+import { isRedirect, isNotFound } from '@tanstack/react-router'
+// isResolvedRedirect 는 react-router 가 re-export 하지 않는다 — core 에서 가져온다
+import { isResolvedRedirect } from '@tanstack/router-core'
 
 try {
   await router.load()
@@ -233,6 +235,12 @@ try {
 
 `isResolvedRedirect(err)` 는 리다이렉트 중에서도 **최종 `href` 가 계산 완료된 것**만
 가려낸다. SSR에서 Location 헤더를 세팅할 때처럼 확정된 URL이 필요한 경우에 쓴다.
+
+> ⚠️ `isRedirect` · `isNotFound` 와 달리 **`isResolvedRedirect` 는
+> `@tanstack/react-router` 가 re-export 하지 않는다.** `@tanstack/router-core` 에서
+> 직접 가져와야 한다. core 는 react-router 의 의존성이라 별도 설치 없이 import 되지만,
+> `package.json` 에 명시하지 않은 패키지를 쓰는 셈이므로 직접 의존성으로 추가해 두는
+> 편이 안전하다.
 
 ## 컴포넌트로 경계 만들기 — `CatchBoundary` / `CatchNotFound`
 
