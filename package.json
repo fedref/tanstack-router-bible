@@ -10,6 +10,7 @@
     "build": "pnpm -r build",
     "build:bible": "pnpm --filter bible build",
     "build:playground": "pnpm --filter playground build",
-    "typecheck": "pnpm -r typecheck"
+    "typecheck": "pnpm -r typecheck",
+    "check:docs": "node scripts/check-doc-coverage.mjs"
   }
 }

@@ -52,7 +52,8 @@ SSR 동작 자체가 불가능하다. 그래서 SSR이 있어야 의미가 생�
 
 ```
 .
-├── docs/               # 📖 문서 — Chapter 00~08 + INDEX(사전)
+├── docs/               # 📖 문서 — Chapter 00~21 + INDEX(사전)
+├── scripts/            # 🔍 check-doc-coverage.mjs (커버리지 검사)
 ├── apps/
 │   ├── bible/          # 🖥️ 완성된 참고 예제. GitHub Pages 배포 대상. (읽기용)
 │   └── playground/     # ✍️ 직접 구현해 보는 연습장. 배포하지 않는다.
@@ -100,7 +101,7 @@ UI: `shadcn/ui`(Base UI 기반, radix 아님) + Tailwind v4 + 라이트/다크 �
 
 ### 심화 — 코어가 제공하지만 기초 8장에 담기지 않는 것들
 
-00~08이 "쓰는 순서"라면, 09~17은 **"남김없이"** 를 담당한다. 순서대로 읽어도 되고
+00~08이 "쓰는 순서"라면, 09~21은 **"남김없이"** 를 담당한다. 순서대로 읽어도 되고
 필요할 때 골라 봐도 된다.
 
 | # | Chapter | 문서 | 다루는 핵심 |
@@ -142,24 +143,76 @@ UI: `shadcn/ui`(Base UI 기반, radix 아님) + Tailwind v4 + 라이트/다크 �
 
 ### 커버리지 측정 방법
 
-문서가 실제로 전부를 덮고 있는지는 눈이 아니라 스크립트로 확인한다. 설치된 패키지의
-타입 정의에서 export 이름과 옵션 필드를 뽑아 `docs/*.md` 전문과 대조한다:
+문서가 실제로 전부를 덮고 있는지는 눈이 아니라 스크립트로 확인한다. **없는 것은 눈에
+보이지 않기 때문이다** — 이 저장소도 한때 100개 중 22개만 문서화된 상태였고, 아무도
+알아채지 못했다.
 
 ```bash
-# export 목록 추출 → 문서와 대조 (누락이 있으면 이름이 출력된다)
-node -e "
-const fs=require('fs');
-const dts='apps/bible/node_modules/@tanstack/react-router/dist/esm/index.d.ts';
-const names=new Set();
-for(const m of fs.readFileSync(dts,'utf8').matchAll(/export\s*\{([^}]*)\}/g))
-  for(let n of m[1].split(',')){
-    n=n.trim().replace(/^type\s+/,'').split(/\s+as\s+/).pop().trim();
-    if(n&&/^[A-Za-z_]/.test(n)) names.add(n);
-  }
-const docs=fs.readdirSync('docs').map(f=>fs.readFileSync('docs/'+f,'utf8')).join('\n');
-const miss=[...names].filter(n=>!new RegExp('\\\\b'+n+'\\\\b').test(docs));
-console.log(miss.length ? '누락 '+miss.length+'개:\n'+miss.join('\n') : '누락 없음');
-"
+pnpm check:docs              # 누락이 있으면 이름을 출력하고 exit 1
+pnpm check:docs --verbose    # 검사한 이름을 전부 출력
 ```
 
-버전을 올린 뒤에는 이 스크립트를 다시 돌린다. 새 API가 추가되면 누락으로 잡힌다.
+`scripts/check-doc-coverage.mjs` 가 설치된 패키지의 타입 정의에서 이름을 뽑아
+`docs/*.md` 전문과 대조한다. 검사 대상은 다섯 갈래다.
+
+| 검사 항목 | 어디서 뽑나 |
+|---|---|
+| **public export** | `@tanstack/react-router` 의 `index.d.ts` |
+| **RouterOptions** | core 의 `RouterOptions` + React 어댑터의 `RouterOptionsExtensions` |
+| **Route 옵션** | `UpdatableRouteOptions` |
+| **Link 옵션 · activeOptions** | `LinkOptionsProps` · `ActiveOptions` |
+| **loader/beforeLoad 인자** | `ContextOptions` |
+
+출력은 이런 모양이다.
+
+```
+문서 커버리지 검사
+  @tanstack/react-router  1.170.18
+  @tanstack/router-core   1.171.15
+  docs/                   208,391자
+
+  ✅ public export            100/100
+  ✅ RouterOptions (core)     45/45
+  ✅ RouterOptions (React)    7/7
+  ✅ Route 옵션                 21/21
+  ✅ Link 옵션                  6/6
+  ✅ activeOptions            4/4
+  ✅ loader/beforeLoad 인자     9/9
+
+  합계 192/192
+```
+
+> React 어댑터가 declaration merging 으로 덧붙이는 옵션(`defaultErrorComponent`,
+> `Wrap`, `InnerWrap` 등)은 **core 문서에 나오지 않는다.** 그래서 core 와 React 쪽을
+> 따로 뽑아 합친다.
+
+### 버전을 올린 뒤에 할 일
+
+```bash
+pnpm update @tanstack/react-router
+pnpm check:docs
+```
+
+새 버전에서 API가 추가됐다면 타입 정의에는 있는데 `docs/` 에는 없으므로 **누락으로
+찍힌다.** 그 항목을 문서화한 뒤 커밋한다.
+
+```
+❌ public export            100/103
+
+누락 — 아래 이름이 docs/ 어디에도 등장하지 않는다:
+
+  [public export]
+    useRoutePreload
+    createNavigationGuard
+    RouteErrorBoundary
+```
+
+### 이 검사가 잡지 못하는 것
+
+하한선을 지키는 장치이지 문서 품질을 보증하지는 않는다. 아래는 사람이 봐야 한다.
+
+- 이름만 한 번 언급되고 **설명이 부실한** 경우
+- 기존 API 의 **동작이 바뀐** 경우 (이름은 그대로이므로 통과한다)
+- **제거·deprecated 된** API 가 문서에 남아 있는 경우
+- 타입 정의의 **인터페이스 이름 자체가 바뀐** 경우 → `⚠️ 추출 실패` 로 표시되니
+  그때는 스크립트의 인터페이스 이름을 갱신한다
