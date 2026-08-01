@@ -133,7 +133,7 @@ Actions 탭 → `Deploy to GitHub Pages` → `Run workflow` 로 수동 실행한
 
 | # | Chapter | 문서 | 예제 라우트 | 상태 |
 |---|------|------|-------------|------|
-| 00 | Getting Started | [docs/00-getting-started.md](docs/00-getting-started.md) | `/` | ✅ |
+| 00 | Getting Started | [docs/00-getting-started.md](docs/00-getting-started.md) | `/getting-started` | ✅ |
 | 01 | 라우팅 기초 | [docs/01-routing.md](docs/01-routing.md) | `/routing/*` | ✅ |
 | 02 | 네비게이션 | [docs/02-navigation.md](docs/02-navigation.md) | `/navigation/*` | ✅ |
 | 03 | 파라미터 (Path/Search) | [docs/03-params.md](docs/03-params.md) | `/params/*` | ✅ |

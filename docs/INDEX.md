@@ -27,7 +27,7 @@
 | `TanStackRouterVite` 플러그인 | 파일 스캔 → `routeTree.gen.ts` 생성 | [00](00-getting-started.md#3-플러그인-셋업) | `apps/bible/vite.config.ts` |
 | `createRouter` | 라우터 인스턴스 생성 (context/preload 옵션) | [00](00-getting-started.md#4-라우터-부트스트랩) | `apps/bible/src/main.tsx` |
 | `Register` 타입 선언 | 전역 타입 등록 → 앱 전체 타입 추론 | [00](00-getting-started.md#4-라우터-부트스트랩) | `apps/bible/src/main.tsx` |
-| Router Devtools | 매칭된 라우트/loader/search 관찰 | [00](00-getting-started.md#5-devtools-읽는-법) | 좌하단 아이콘 |
+| Router Devtools | 매칭된 라우트/loader/search 관찰 | [00](00-getting-started.md#5-devtools-읽는-법) | `/getting-started` · 좌하단 아이콘 |
 | `defaultPreload: 'intent'` | 링크 hover 시 미리 로드 | [00](00-getting-started.md#4-라우터-부트스트랩) | 전 링크 |
 
 ## API 빠른 참조 (구현된 것)

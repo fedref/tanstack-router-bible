@@ -71,8 +71,16 @@ type NavItem = {
 
 const NAV: { label: string; items: NavItem[] }[] = [
   {
-    label: 'Home',
-    items: [{ title: '개요 · Chapter 목차', to: '/', icon: Home, exact: true }],
+    label: '시작하기',
+    items: [
+      { title: '개요 · Chapter 목차', to: '/', icon: Home, exact: true },
+      {
+        title: '00 · 설치와 셋업',
+        to: '/getting-started',
+        icon: Wrench,
+        exact: true,
+      },
+    ],
   },
   {
     label: '01 · 라우팅 기초',

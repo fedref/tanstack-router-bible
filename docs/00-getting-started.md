@@ -1,6 +1,7 @@
 # 00 · Getting Started
 
-> 대응 예제: `apps/bible/` 전체 (특히 `vite.config.ts`, `src/main.tsx`, `src/routes/__root.tsx`)
+> 대응 예제: `/getting-started` — 이 앱의 실제 셋업 코드를 단계별로 보여 준다
+> 예제 파일: `apps/bible/vite.config.ts`, `src/main.tsx`, `src/routes/__root.tsx`
 > 📖 공식: [overview](https://tanstack.com/router/latest/docs/framework/react/overview) ·
 > [decisions-on-dx](https://tanstack.com/router/latest/docs/framework/react/decisions-on-dx) ·
 > [installation/with-vite](https://tanstack.com/router/latest/docs/framework/react/installation/with-vite)
