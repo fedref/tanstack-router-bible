@@ -57,6 +57,139 @@ function UserDetail() {
 - **parse 없이**: `params.parse` 를 생략하면 값은 그대로 `string` 이다(가장 흔함).
 - **loader/beforeLoad 에서**: 두 훅 모두 `({ params }) => …` 로 같은 값을 받는다.
 
+### Path Param 문법 총정리
+
+`$param` 하나만 있는 게 아니다. **다섯 가지 문법**이 있고, 조합도 된다.
+
+| 문법 | 이름 | 매칭 예 | `useParams()` 결과 |
+|------|------|---------|---------------------|
+| `$postId` | 필수(required) | `/posts/123` | `{ postId: '123' }` |
+| `{-$category}` | **선택(optional)** | `/posts` 또는 `/posts/tech` | `{ category: undefined \| 'tech' }` |
+| `$` | splat / wildcard | `/docs/a/b/c` | `{ _splat: 'a/b/c' }` |
+| `post-{$postId}` | **prefix** | `/posts/post-123` | `{ postId: '123' }` |
+| `{$fileName}.txt` | **suffix** | `/files/doc.txt` | `{ fileName: 'doc' }` |
+
+### 선택적 Path Param — `{-$param}`
+
+**하나의 라우트로 "있을 때와 없을 때"를 모두 처리한다.** 없으면 값이 `undefined` 다.
+
+```tsx
+// /posts 와 /posts/tech 둘 다 이 라우트가 받는다
+export const Route = createFileRoute('/posts/{-$category}')({
+  loader: ({ params }) => fetchPosts({ category: params.category }),  // undefined 가능
+  component: Posts,
+})
+
+function Posts() {
+  const { category } = Route.useParams()
+  return <h1>{category ? `${category} 글 목록` : '전체 글 목록'}</h1>
+}
+```
+
+여러 개를 이어 붙일 수도 있고, 필수와 섞을 수도 있다.
+
+```tsx
+// /posts · /posts/tech · /posts/tech/hello 전부 매칭
+createFileRoute('/posts/{-$category}/{-$slug}')
+
+// /users/123 · /users/123/settings 매칭 (id 는 필수, tab 은 선택)
+createFileRoute('/users/$id/{-$tab}')
+```
+
+**이동할 때는 `undefined` 를 넘겨 생략한다.**
+
+```tsx
+<Link to="/posts/{-$category}" params={{ category: 'tech' }}>기술 글</Link>
+<Link to="/posts/{-$category}" params={{ category: undefined }}>전체 글</Link>
+```
+
+이 문법이 가장 빛나는 곳이 **다국어 URL**이다. `/{-$locale}/about` 하나로 `/about`,
+`/en/about`, `/ko/about` 을 전부 처리한다 — 자세한 내용은 19장에서 다룬다.
+
+### Prefix · Suffix — 세그먼트 일부만 변수로
+
+세그먼트 전체가 아니라 **일부만** 변수로 잡는다. 중괄호로 감싼 부분이 변수다.
+
+```tsx
+createFileRoute('/posts/post-{$postId}')        // /posts/post-123  → postId: '123'
+createFileRoute('/files/{$fileName}.txt')       // /files/doc.txt   → fileName: 'doc'
+createFileRoute('/users/user-{$userId}.json')   // /users/user-1.json → userId: '1'
+```
+
+선택적 param과도 조합된다.
+
+```tsx
+createFileRoute('/files/prefix{-$name}.txt')    // /files/prefix.txt · /files/prefixdoc.txt
+```
+
+파일 확장자를 URL에 노출하는 API 스타일 경로나, `post-`, `user-` 같은 접두사를 쓰는
+레거시 URL 구조를 그대로 옮길 때 쓴다.
+
+### Splat — 남은 경로 전부 (`_splat`)
+
+```tsx
+// /docs/guides/getting-started 처럼 몇 단계든 받는다
+export const Route = createFileRoute('/docs/$')({
+  component: () => {
+    const { _splat } = Route.useParams()   // 'guides/getting-started'
+    return <div>{_splat}</div>
+  },
+})
+```
+
+**변수 이름이 `_splat` 으로 고정**이라는 점을 기억한다. splat도 prefix/suffix와 조합된다.
+
+```tsx
+createFileRoute('/files/{$}.txt')          // /files/a/b.txt → _splat: 'a/b'
+createFileRoute('/docs/{-$version}/$')     // /docs/v2/a/b   → version: 'v2', _splat: 'a/b'
+```
+
+### `params.priority` — 매칭 후보가 겹칠 때
+
+`params.parse` 가 **`false` 를 반환하면 "이 라우트는 아니다"** 라는 뜻이 되어, 라우터가
+다음 후보로 넘어간다. `priority` 는 어느 후보를 먼저 시도할지 정한다(기본 `0`, 클수록 먼저).
+
+```tsx
+// 숫자 id 전용 라우트 — 숫자가 아니면 매칭을 포기한다
+export const Route = createFileRoute('/posts/$postId')({
+  params: {
+    priority: 10,                       // 다른 후보보다 먼저 시도
+    parse: ({ postId }) => {
+      if (!/^\d+$/.test(postId)) return false   // ← 매칭 포기, 다음 후보로
+      return { postId: Number(postId) }
+    },
+    stringify: ({ postId }) => ({ postId: String(postId) }),
+  },
+})
+```
+
+`/posts/123` 은 이 라우트가, `/posts/hello-world` 는 slug를 받는 다른 라우트가 처리하도록
+갈라놓는 식으로 쓴다.
+
+### `pathParamsAllowedCharacters` — 이스케이프 예외
+
+path param 값은 기본적으로 `encodeURIComponent` 로 인코딩된다. 그래서 이메일 주소 같은
+값을 넣으면 `@` 가 `%40` 이 되어 URL이 지저분해진다. 특정 문자를 그대로 두려면 라우터
+옵션에 등록한다.
+
+```tsx
+createRouter({ routeTree, pathParamsAllowedCharacters: ['@', '+'] })
+```
+
+지정 가능한 문자는 여덟 개다: `;` `:` `@` `&` `=` `+` `$` `,`
+
+### 라우트 밖에서 params 읽기
+
+```tsx
+import { useParams } from '@tanstack/react-router'
+
+// 특정 라우트를 지정 — 타입이 정확하다 (권장)
+const { postId } = useParams({ from: '/posts/$postId' })
+
+// 어느 라우트인지 모를 때 — 전부 optional 이 된다
+const { postId } = useParams({ strict: false })
+```
+
 ## Search Params — 1급 검증/타입
 
 Search 는 이 라우터의 간판 기능이다. `validateSearch` 에 **"검증 후 값을 돌려주는 함수"** 를

@@ -38,8 +38,85 @@ src/routes/
 
 가장 먼저 눈에 익혀야 할 규칙은 이것 하나다. **파일명의 `.`(점)은 경로 구분자(`/`)로
 읽힌다.** 그래서 `routing.matching.$productId.tsx` 는 점을 슬래시로 바꿔 읽으면
-`/routing/matching/:productId` 가 된다. (폴더로 나눠 `routing/matching/$productId.tsx` 처럼
-써도 결과는 같다. 파일 수가 많아지면 폴더 방식이 보기 편하다.)
+`/routing/matching/:productId` 가 된다.
+
+## 파일을 나누는 두 가지 방식 — 점(flat) vs 폴더(directory)
+
+위에서 본 점 표기는 **두 가지 표기법 중 하나**일 뿐이다. 같은 라우트 트리를 폴더로 표현할
+수도 있고, 둘을 섞을 수도 있다. **셋 다 완전히 같은 URL과 같은 부모-자식 관계를 만든다.**
+
+```
+── 점(flat) 방식 ──────────────    ── 폴더(directory) 방식 ────────
+routes/                            routes/
+├── routing.tsx        → /routing  └── routing/
+├── routing.index.tsx  → /routing      ├── route.tsx   → /routing  ← 레이아웃
+└── routing.concepts.tsx               ├── index.tsx   → /routing
+                       → /routing/concepts└── concepts.tsx → /routing/concepts
+```
+
+### 폴더 방식의 레이아웃은 `route.tsx` 다
+
+여기가 유일하고 결정적인 함정이다. 점 방식에서 레이아웃 역할을 하던 `routing.tsx` 는
+폴더 방식에서 **`routing/route.tsx`** 가 된다. `routing/routing.tsx` 가 아니다.
+
+파일 이름 `route` 는 제너레이터가 **"이 폴더 자체를 담당하는 라우트"** 로 알아보는
+예약어다(`routeToken`, 기본값 `"route"`). 이름을 잘못 지으면 레이아웃이 되기는커녕
+`/routing/routing` 이라는 엉뚱한 URL이 하나 생겨 버린다. 조용히 잘못되는 종류의 실수라
+더 위험하다.
+
+마찬가지로 `index` 도 예약어다(`indexToken`, 기본값 `"index"`). 두 토큰 모두
+`vite.config.ts` 의 플러그인 옵션으로 바꿀 수 있지만(`routeToken: '_layout'` 처럼),
+기본값을 그대로 쓰는 편이 협업에 낫다. 둘을 같은 값으로 지정하면 에러가 난다.
+
+### 섞어 써도 된다
+
+```
+routes/
+├── mix.tsx              → /mix         (점 방식 레이아웃)
+├── mix/
+│   ├── index.tsx        → /mix
+│   └── deep/nested.tsx  → /mix/deep/nested
+```
+
+`mix.tsx` 가 부모 레이아웃이고 `mix/` 폴더 안의 파일들이 그 자식이 된다. 얕은 곳은 점으로,
+깊어지는 곳부터 폴더로 — 이런 식의 점진적 전환이 가능하다.
+
+### 폴더 방식의 진짜 장점 — co-location
+
+URL만 놓고 보면 두 방식은 동등하다. 그럼에도 실무 프로젝트가 대개 폴더로 수렴하는 이유는
+**그 라우트에서만 쓰는 파일을 옆에 둘 수 있기** 때문이다. `-`(하이픈)으로 시작하는 파일과
+폴더는 라우팅에서 제외된다.
+
+```
+routes/products/
+├── route.tsx            → /products        (레이아웃)
+├── index.tsx            → /products        (목록)
+├── $productId.tsx       → /products/:productId
+└── -components/         ← 라우트 아님. URL이 생기지 않는다
+    ├── product-card.tsx
+    └── filter-bar.tsx
+```
+
+점 방식에서는 `-components` 를 놓을 자리가 마땅치 않아 `src/components/` 로 빼야 한다.
+라우트가 수십 개로 늘고 각 라우트마다 전용 컴포넌트가 서너 개씩 붙으면 이 차이가 크게
+벌어진다.
+
+### 그래서 어느 쪽을 쓰나
+
+| 상황 | 권장 |
+|------|------|
+| 라우트 목록을 한눈에 훑고 싶다 | **점** — 파일 목록이 곧 사이트맵이다 |
+| 라우트당 전용 컴포넌트·훅·쿼리가 많다 | **폴더** + `-` co-location |
+| 학습·데모용 예제 모음 | **점** — 이 저장소가 이 방식을 쓴다 |
+| 규모가 커지는 실무 프로젝트 | **폴더** |
+
+이 저장소의 `apps/bible` 이 점 방식으로 통일된 것은 **43개 라우트를 한 화면에서 훑기
+위해서**다. 챕터별로 `params.*`, `query.*` 처럼 접두사가 모여 보이는 편이 학습에 낫다는
+판단이지, 점 방식이 더 우월해서가 아니다. 실제 프로젝트를 시작한다면 폴더 방식을 권한다.
+
+직접 확인해 보려면 `apps/playground/src/routes/` 에 세 방식을 각각 만들고
+`pnpm --filter playground build` 를 돌린 뒤 생성된 `routeTree.gen.ts` 의
+`FileRoutesByFullPath` 를 열어 보면 된다. 세 방식이 같은 트리를 만드는 것을 눈으로 볼 수 있다.
 
 ## 최소 예제
 
@@ -65,7 +142,7 @@ export const Route = createFileRoute('/')({
 
 | 종류 | 파일 예 | URL | 설명 |
 |------|---------|-----|------|
-| Root | `__root.tsx` | (전체) | 모든 라우트의 조상. 공통 레이아웃/컨텍스트를 정의 |
+| Root | `__root.tsx` | (전체) | 모든 라우트의 최상위 부모. 공통 레이아웃/컨텍스트를 정의 |
 | Index | `x.index.tsx` | `/x` | 부모 경로와 **정확히** 일치할 때만 렌더 |
 | Static | `about.tsx` | `/about` | 고정 경로 |
 | Layout | `x.tsx`(+자식) | `/x/*` | `Outlet` 으로 자식을 감싸는 공유 레이아웃 |
@@ -111,6 +188,34 @@ URL 중간에 "변하는 값"을 넣고 싶을 때 동적 세그먼트를 쓴다
 라우터가 URL을 고를 때는 **더 구체적인 것을 먼저** 본다. 예컨대 `/routing/matching`(정확히
 그 경로)과 `/routing/matching/123`(동적 자식)이 있으면, 각각에 맞는 라우트가 정확히 갈린다.
 
+### 매칭 우선순위 — 파일을 쓴 순서는 상관없다
+
+여기가 중요하다. **라우트를 어떤 순서로 정의했든 라우터가 알아서 정렬한다.** React Router의
+옛 버전처럼 "위에 쓴 게 먼저 매칭된다" 같은 규칙이 없다. 정렬 기준은 **구체적인 것부터**이며,
+순서는 다음 네 단계로 고정되어 있다.
+
+| 순위 | 종류 | 예 |
+|:---:|------|-----|
+| 1 | **Index 라우트** | `posts.index.tsx` → `/posts` |
+| 2 | **정적 라우트** (세그먼트가 많을수록 먼저) | `posts.new.tsx` → `/posts/new` |
+| 3 | **동적 라우트** (경로가 길수록 먼저) | `posts.$postId.tsx` → `/posts/:postId` |
+| 4 | **Splat 라우트** | `posts.$.tsx` → `/posts/*` |
+
+라우터는 정렬된 트리를 훑다가 **처음 매칭되는 곳에서 멈춘다.**
+
+```
+/posts/new  →  ① posts.index    ✕ (index 는 /posts 에만)
+               ② posts.new      ✓ 여기서 멈춘다
+                  posts.$postId   (도달하지 않음)
+```
+
+이 규칙 덕분에 `/posts/new`(정적)와 `/posts/$postId`(동적)를 함께 둬도 `new` 가 postId로
+잘못 해석되는 일이 없다. **정적이 항상 동적을 이긴다.** 정적끼리는 세그먼트가 많은 쪽
+(`about/us`)이 적은 쪽(`about`)보다 먼저다.
+
+> 이 자동 정렬을 무시하고 직접 개입하고 싶다면 `params.priority` 를 쓴다(03장). 다만
+> 실제로 필요한 경우는 드물다.
+
 ```tsx
 // apps/bible/src/routes/routing.matching.$productId.tsx (발췌)
 export const Route = createFileRoute('/routing/matching/$productId')({
@@ -147,16 +252,74 @@ function ProductDetail() {
 
 ## 네이밍 규칙 정리
 
-한 번에 외우려 하지 말고, 표를 옆에 두고 필요할 때 찾아보면 된다.
+한 번에 외우려 하지 말고, 표를 옆에 두고 필요할 때 찾아보면 된다. **이 표가 파일기반
+라우팅 규칙의 전부다.**
 
-| 표기 | 의미 |
-|------|------|
-| `.` | 경로 구분자 (`a.b` → `/a/b`) |
-| `index` | 부모 경로 자체에 매칭 |
-| `$param` | 동적 세그먼트 → `params.param` |
-| `$` (단독) | splat / catch-all (남은 경로 전부) |
-| `_layout` (앞 밑줄) | pathless 레이아웃 (URL에는 안 붙음) |
-| `-file` (앞 하이픈) | 라우트에서 제외되는 파일 (컴포넌트/유틸 보관용) |
+| 표기 | 의미 | URL에 나타나나 | 예 |
+|------|------|:---:|-----|
+| `.` | 경로 구분자 (`a.b` → `/a/b`) | — | `params.search.tsx` → `/params/search` |
+| `index` | 부모 경로 **자체**에 매칭 | ✕ | `posts.index.tsx` → `/posts` |
+| `route` | **폴더 자체**를 담당하는 라우트(=레이아웃) | ✕ | `posts/route.tsx` → `/posts` |
+| `__root` | 모든 라우트의 최상위 부모. 파일 하나만 존재 | ✕ | `__root.tsx` |
+| `$param` | 동적 세그먼트 → `params.param` | ✓ | `$postId.tsx` → `/:postId` |
+| `{-$param}` | **선택적** 동적 세그먼트 (없으면 `undefined`) | 선택 | `{-$category}.tsx` → `/posts` · `/posts/tech` |
+| `$` (단독) | splat / catch-all (남은 경로 전부) → `params._splat` | ✓ | `docs.$.tsx` → `/docs/*` |
+| `pre-{$param}` | prefix — 세그먼트 앞부분은 고정 | ✓ | `post-{$id}.tsx` → `/post-123` |
+| `{$param}.ext` | suffix — 세그먼트 뒷부분은 고정 | ✓ | `{$name}.txt` → `/doc.txt` |
+| `_layout` (**앞** 밑줄) | pathless 레이아웃 — 감싸되 URL엔 안 붙음 | ✕ | `_auth.tsx` + `_auth.me.tsx` → `/me` |
+| `layout_` (**뒤** 밑줄) | un-nesting — URL은 유지하되 부모 레이아웃에서 **탈출** | ✓ | `posts_.$id.tsx` → `/posts/:id` (posts 레이아웃 없이) |
+| `(group)` | 괄호 폴더/세그먼트 — 이름이 URL에서 **삭제**됨 | ✕ | `(marketing)/about.tsx` → `/about` |
+| `-file`, `-folder` (앞 하이픈) | 라우팅에서 제외 (co-location용) | ✕ | `-components/card.tsx` |
+| `.lazy` | 컴포넌트를 분리 번들로 — 09장 참조 | — | `posts.lazy.tsx` |
+
+### 앞 밑줄과 뒤 밑줄은 정반대다
+
+혼동하기 쉬워서 따로 떼어 설명한다. 둘 다 밑줄이지만 **하는 일이 반대**다.
+
+```
+_auth.tsx + _auth.dashboard.tsx      → URL: /dashboard
+                                       레이아웃: _auth 가 감싼다      ← URL만 숨김
+
+posts.tsx + posts_.$postId.tsx       → URL: /posts/:postId
+                                       레이아웃: posts 가 안 감싼다   ← 레이아웃만 탈출
+```
+
+- **앞 밑줄(`_auth`)**: "레이아웃은 공유하고 싶은데 URL에 한 단계 늘리긴 싫다."
+  인증 가드를 여러 라우트에 한 번에 걸 때 쓴다(06장).
+- **뒤 밑줄(`posts_`)**: "URL 구조는 `/posts/:id` 로 두고 싶은데, 목록 화면의 사이드바
+  레이아웃까지 상속받긴 싫다." 상세 페이지를 전체 화면으로 띄울 때 쓴다.
+
+### 괄호 그룹 `(group)` 은 순수하게 정리용이다
+
+```
+routes/
+├── (marketing)/
+│   ├── about.tsx      → /about
+│   └── pricing.tsx    → /pricing
+└── (app)/
+    └── dashboard.tsx  → /dashboard
+```
+
+괄호 안 이름은 URL에 **전혀 나타나지 않고**, 레이아웃도 만들지 않는다. 파일을 주제별로
+묶어 두기만 하는 장치다. 레이아웃까지 공유하고 싶다면 괄호가 아니라 앞 밑줄
+(`_marketing.tsx`)을 써야 한다. 이 둘을 헷갈리면 "왜 레이아웃이 안 걸리지?" 로 시간을
+쓰게 된다.
+
+### 토큰은 바꿀 수 있다
+
+`index` 와 `route` 라는 이름 자체를 바꾸고 싶다면 플러그인 옵션으로 가능하다.
+
+```ts
+TanStackRouterVite({
+  target: 'react',
+  indexToken: 'index',   // 기본값
+  routeToken: 'route',   // 기본값 — '_layout' 등으로 변경 가능
+})
+```
+
+둘을 **같은 값으로 지정하면 에러**가 난다(`The "indexToken" and "routeToken" options must be
+different.`). 특별한 이유가 없다면 기본값을 유지하는 편이 좋다 — 남이 읽을 때 표준 규칙이
+통하지 않게 되기 때문이다.
 
 ## 흔한 실수 / 함정
 

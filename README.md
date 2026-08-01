@@ -7,9 +7,44 @@ TanStack Router(React · 파일기반)를 **공식 문서 수준으로 전부** 
 - 구성: `docs/` 의 Markdown 문서 ↔ `apps/bible/` 의 **실제 구동되는 예제** 가 짝을 이룬다.
 - 학습법: 문서에서 개념을 읽고 → `bible` 에서 눌러보고 → `playground` 에서 직접 구현해 본다.
 
-> 범위: **React 코어 + 파일기반 라우팅 + TanStack Query 통합.**
-> SSR / TanStack Start / Solid / 고급 조합(Deferred, Route Masking, View Transitions 등)은
-> Phase 2로 보류. 문서 구조는 이후 확장 가능하게 설계됨.
+## 이 문서의 원칙 — 빠짐없이, 자세하게
+
+**`@tanstack/react-router` 가 export 하는 모든 API와 모든 옵션을 다룬다.** 이것이 이 저장소의
+제1원칙이며, 다른 모든 편의는 여기에 양보한다.
+
+- **간결함보다 완전함.** 짧고 읽기 좋은 문서보다, 찾던 기능이 실제로 실려 있는 문서가 낫다.
+- **"어려우니 빼자"는 금지.** 난이도를 이유로 기능을 생략하면, 독자는 그 기능이 *없다고*
+  믿게 된다. 이해 못 할 위험보다 **존재를 모를 위험이 크다.** 어려운 주제는 빼는 대신
+  설명을 더 길게 쓴다.
+- **모르는 채 넘어가지 않게.** 잘 안 쓰는 API, 저수준 유틸, deprecated 항목까지 적는다.
+  대신 "언제 쓰나 / 대개 안 쓴다 / 무엇으로 대체됐다"를 함께 밝힌다.
+- **커버리지는 측정한다.** 패키지의 export 목록과 옵션 타입을 문서와 기계적으로 대조해
+  누락을 찾는다. 감각이 아니라 목록으로 확인한다.
+
+> 다루는 범위: `@tanstack/react-router` **전체** + 파일기반 라우팅 + TanStack Query 통합.
+> TanStack Start / Solid 어댑터는 별도 패키지이므로 경계만 짚고 넘어간다.
+
+### SSR 전용 기능은 "설명 + 예시 코드"까지만
+
+이 저장소의 `bible` 앱은 **GitHub Pages에 배포되는 순수 CSR(SPA)** 이다. 서버가 없으므로
+SSR 동작 자체가 불가능하다. 그래서 SSR이 있어야 의미가 생기는 기능은 이렇게 다룬다:
+
+- ✅ **문서에는 싣는다** — 이 패키지가 export 하는 이상 "무엇인지"는 알아야 한다.
+- ✅ **예시 코드는 쓴다** — 실제 프로젝트에서 어떻게 쓰는지 보여 준다.
+- 🚫 **실행 예제(라우트)는 만들지 않는다** — 동작하지 않는 예제는 없느니만 못하다.
+
+해당 항목에는 다음 배지를 붙여 한눈에 구분되게 한다:
+
+> **🚫 SSR 전용** — 이 저장소(GitHub Pages · CSR)에서는 실행 예제를 두지 않는다.
+> 설명과 예시 코드로만 다룬다.
+
+**대상은 9개다**: `HeadContent` · `Scripts` · `Asset` · `ScriptOnce` · `useTags` ·
+`ClientOnly` · `useHydrated` · `createSerializationAdapter` · `createRouterConfig`
+(+ 라우터 옵션 `isServer` · `isShell` · `isPrerendering` · `defaultSsr` · `dehydrate` · `hydrate`)
+
+> 참고: 나머지 API는 **전부 CSR에서 동작한다.** `ScrollRestoration`, `useBlocker`,
+> 코드 스플리팅처럼 오히려 **SPA에서 더 중요한** 것들도 많으므로, "SSR 같아 보인다"는
+> 이유로 빼지 않는다.
 
 ---
 
@@ -63,6 +98,27 @@ UI: `shadcn/ui`(Base UI 기반, radix 아님) + Tailwind v4 + 라이트/다크 �
 | 07 | TanStack Query 통합 | [docs/07-query-integration.md](docs/07-query-integration.md) | `/query/*` | ✅ |
 | 08 | 시너지 종합 (kitchen-sink) | [docs/08-synergy.md](docs/08-synergy.md) | `/kitchen-sink/*` | ✅ |
 
+### 심화 — 코어가 제공하지만 기초 8장에 담기지 않는 것들
+
+00~08이 "쓰는 순서"라면, 09~17은 **"남김없이"** 를 담당한다. 순서대로 읽어도 되고
+필요할 때 골라 봐도 된다.
+
+| # | Chapter | 문서 | 다루는 핵심 |
+|---|------|------|-------------|
+| 09 | 코드 스플리팅 & Lazy | [docs/09-code-splitting.md](docs/09-code-splitting.md) | `createLazyFileRoute` · `lazyRouteComponent` · `codeSplitGroupings` |
+| 10 | Deferred & 스트리밍 | [docs/10-deferred-streaming.md](docs/10-deferred-streaming.md) | `defer` · `Await` · `useAwaited` |
+| 11 | Match API & 라우터 상태 | [docs/11-match-api.md](docs/11-match-api.md) | `useMatch(es)` · `useMatchRoute` · `useLocation` |
+| 12 | 에러 · NotFound 경계 | [docs/12-error-boundaries.md](docs/12-error-boundaries.md) | `CatchBoundary` · `onError` · `notFoundMode` |
+| 13 | Search 미들웨어 & 직렬화 | [docs/13-search-middleware.md](docs/13-search-middleware.md) | `retainSearchParams` · `stripSearchParams` · 직렬화 어댑터 |
+| 14 | 네비게이션 차단 & History | [docs/14-blocking-history.md](docs/14-blocking-history.md) | `useBlocker` · `Block` · `createMemoryHistory` |
+| 15 | Masking · 스크롤 · 전환 | [docs/15-masking-scroll.md](docs/15-masking-scroll.md) | `createRouteMask` · `ScrollRestoration` · View Transitions |
+| 16 | 커스텀 Link · SSR API · 유틸 | [docs/16-custom-link-utils.md](docs/16-custom-link-utils.md) | `createLink` · `HeadContent` · 저수준 유틸 |
+| 17 | 옵션 전수 레퍼런스 | [docs/17-options-reference.md](docs/17-options-reference.md) | RouterOptions · Route 옵션 · Link 옵션 총람 |
+| 18 | 생성기 설정 · CLI · Virtual Routes | [docs/18-generator-config.md](docs/18-generator-config.md) | `tsr.config.json` 옵션 전수 · `tsr` CLI · Virtual File Routes |
+| 19 | 국제화 (i18n) | [docs/19-i18n.md](docs/19-i18n.md) | `{-$locale}` optional param · `rewrite` |
+| 20 | ESLint & Devtools | [docs/20-eslint-devtools.md](docs/20-eslint-devtools.md) | 속성 순서 규칙 · Devtools 읽는 법 |
+| 21 | **실전 레시피 (How-To)** | [docs/21-recipes.md](docs/21-recipes.md) | 테스트 · 디버깅 · 배포 · 환경변수 · RBAC · 마이그레이션 |
+
 ## 사전 (주제별 조회)
 
 빠른 조회는 **[docs/INDEX.md](docs/INDEX.md)** 참고 — API/기능명으로 문서와 예제 라우트를 역인덱싱한다.
@@ -76,3 +132,34 @@ UI: `shadcn/ui`(Base UI 기반, radix 아님) + Tailwind v4 + 라이트/다크 �
 ⑤ 🔗 시너지(다른 기능과의 조합) → ▶ 실행 예제(앱 라우트) → 📖 공식 문서 링크.**
 
 문서 서술은 한국어, 코드 식별자·기술 용어는 원문 유지.
+
+### 실행 예제가 없어도 문서는 쓴다
+
+초판에서는 "앱에 예제가 있는 주제만 자세히 쓴다"는 암묵적 규칙이 작동해, 예제를 만들기
+번거로운 기능이 문서에서도 통째로 빠졌다. 이제는 반대로 한다 — **문서가 먼저다.** 실행
+예제가 아직 없으면 `▶ 실행 예제` 자리에 `(예제 없음 — 코드 조각으로 설명)` 이라고 적고
+설명은 그대로 자세히 쓴다.
+
+### 커버리지 측정 방법
+
+문서가 실제로 전부를 덮고 있는지는 눈이 아니라 스크립트로 확인한다. 설치된 패키지의
+타입 정의에서 export 이름과 옵션 필드를 뽑아 `docs/*.md` 전문과 대조한다:
+
+```bash
+# export 목록 추출 → 문서와 대조 (누락이 있으면 이름이 출력된다)
+node -e "
+const fs=require('fs');
+const dts='apps/bible/node_modules/@tanstack/react-router/dist/esm/index.d.ts';
+const names=new Set();
+for(const m of fs.readFileSync(dts,'utf8').matchAll(/export\s*\{([^}]*)\}/g))
+  for(let n of m[1].split(',')){
+    n=n.trim().replace(/^type\s+/,'').split(/\s+as\s+/).pop().trim();
+    if(n&&/^[A-Za-z_]/.test(n)) names.add(n);
+  }
+const docs=fs.readdirSync('docs').map(f=>fs.readFileSync('docs/'+f,'utf8')).join('\n');
+const miss=[...names].filter(n=>!new RegExp('\\\\b'+n+'\\\\b').test(docs));
+console.log(miss.length ? '누락 '+miss.length+'개:\n'+miss.join('\n') : '누락 없음');
+"
+```
+
+버전을 올린 뒤에는 이 스크립트를 다시 돌린다. 새 API가 추가되면 누락으로 잡힌다.
