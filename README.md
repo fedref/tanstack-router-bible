@@ -83,6 +83,37 @@ pnpm build                  # 두 앱 전체 프로덕션 빌드
 버전: `@tanstack/react-router ^1.170` · `router-plugin ^1.168` · `react 19` · `vite 6` · `react-query ^5`
 UI: `shadcn/ui`(Base UI 기반, radix 아님) + Tailwind v4 + 라이트/다크 테마. shadcn studio 스타일 대시보드 쉘.
 
+## 배포
+
+`main` 에 push 하면 GitHub Actions 가 `apps/bible` 을 빌드해 GitHub Pages 로 올린다.
+→ https://fedref.github.io/tanstack-router-bible/
+
+### 문서만 고치면 배포가 돌지 않는다
+
+`.github/workflows/deploy-pages.yml` 에 `paths` 필터가 걸려 있다. **배포 산출물에
+영향을 주는 경로가 바뀔 때만** 워크플로가 실행된다.
+
+| 바뀐 곳 | 배포 |
+|---------|:----:|
+| `apps/bible/**` | 🚀 |
+| `pnpm-lock.yaml` · `pnpm-workspace.yaml` · `package.json` | 🚀 |
+| `.github/workflows/deploy-pages.yml` | 🚀 |
+| `docs/**` · `README.md` · `CLAUDE.md` · `scripts/**` | ⏭️ 스킵 |
+| `apps/playground/**` | ⏭️ 스킵 (배포 대상이 아니다) |
+
+**스킵은 "성공"이 아니라 "미실행"이다.** Actions 목록에 아예 나타나지 않으므로,
+문서만 고치고 나서 실행 기록이 없는 것은 정상이다. 이미 배포된 사이트는 그대로
+유지된다.
+
+### 배포가 필요한데 안 됐을 때
+
+Actions 탭 → `Deploy to GitHub Pages` → `Run workflow` 로 수동 실행한다.
+`workflow_dispatch` 는 `paths` 필터와 무관하게 항상 열려 있다.
+
+> ⚠️ 빌드에 영향을 주는 경로가 새로 생기면 `paths` 목록도 함께 갱신해야 한다.
+> 빠뜨리면 **"고쳤는데 배포가 안 되는"** 상태가 되고, 이건 에러 없이 조용히
+> 잘못되므로 알아채기 어렵다.
+
 ---
 
 ## 커리큘럼 (순차 학습 경로)
