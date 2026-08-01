@@ -15,7 +15,7 @@ export const Route = createFileRoute('/routing/concepts')({
 })
 
 const ROWS: { kind: string; file: string; url: string; note: string }[] = [
-  { kind: 'Root', file: '__root.tsx', url: '(전체)', note: '모든 라우트의 조상. 공통 레이아웃/컨텍스트 정의' },
+  { kind: 'Root', file: '__root.tsx', url: '(전체)', note: '모든 라우트의 최상위 부모. 공통 레이아웃/컨텍스트 정의' },
   { kind: 'Index', file: 'x.index.tsx', url: '/x', note: '부모 경로와 정확히 일치할 때 렌더' },
   { kind: 'Static', file: 'about.tsx', url: '/about', note: '고정 경로' },
   { kind: 'Layout', file: 'x.tsx (+자식)', url: '/x/*', note: 'Outlet 으로 자식을 감싸는 공유 레이아웃' },
