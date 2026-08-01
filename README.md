@@ -24,6 +24,19 @@ TanStack Router(React · 파일기반)를 **공식 문서 수준으로 전부** 
 > 다루는 범위: `@tanstack/react-router` **전체** + 파일기반 라우팅 + TanStack Query 통합.
 > TanStack Start / Solid 어댑터는 별도 패키지이므로 경계만 짚고 넘어간다.
 
+**"전부"의 경계를 분명히 해 둔다.**
+
+| 대상 | 커버리지 |
+|---|---|
+| 값 export (함수·컴포넌트·훅·상수) | **100 / 100** — 전부 |
+| 라우터·라우트·Link 옵션 | **192 / 192** — 전부 |
+| 공식 문서 페이지 | **57 / 57** — 전부 |
+| 타입 전용 export | **80 / 204** — 직접 쓰게 되는 것만 |
+
+타입 204개 중 나머지 124개는 `AnyRoute` · `ResolveParams` · `RelativeToPath` 처럼
+**제네릭 추론을 위한 내부 헬퍼**다. `<Link to>` 자동완성을 만들어 내는 부품이지 우리가
+import 하는 것이 아니다. 목록과 판단 근거는 [17장 6부](docs/17-options-reference.md#6부--타입-export-총람)에 있다.
+
 ### SSR 전용 기능은 "설명 + 예시 코드"까지만
 
 이 저장소의 `bible` 앱은 **GitHub Pages에 배포되는 순수 CSR(SPA)** 이다. 서버가 없으므로
@@ -52,8 +65,8 @@ SSR 동작 자체가 불가능하다. 그래서 SSR이 있어야 의미가 생�
 
 ```
 .
-├── docs/               # 📖 문서 — Chapter 00~21 + INDEX(사전)
-├── scripts/            # 🔍 check-doc-coverage.mjs (커버리지 검사)
+├── docs/               # 📖 문서 — Chapter 00~22 + INDEX(사전)
+├── scripts/            # 🔍 커버리지·링크 검사 스크립트
 ├── apps/
 │   ├── bible/          # 🖥️ 완성된 참고 예제. GitHub Pages 배포 대상. (읽기용)
 │   └── playground/     # ✍️ 직접 구현해 보는 연습장. 배포하지 않는다.
@@ -132,7 +145,7 @@ Actions 탭 → `Deploy to GitHub Pages` → `Run workflow` 로 수동 실행한
 
 ### 심화 — 코어가 제공하지만 기초 8장에 담기지 않는 것들
 
-00~08이 "쓰는 순서"라면, 09~21은 **"남김없이"** 를 담당한다. 순서대로 읽어도 되고
+00~08이 "쓰는 순서"라면, 09~22는 **"남김없이"** 를 담당한다. 순서대로 읽어도 되고
 필요할 때 골라 봐도 된다.
 
 | # | Chapter | 문서 | 다루는 핵심 |
@@ -150,6 +163,7 @@ Actions 탭 → `Deploy to GitHub Pages` → `Run workflow` 로 수동 실행한
 | 19 | 국제화 (i18n) | [docs/19-i18n.md](docs/19-i18n.md) | `{-$locale}` optional param · `rewrite` |
 | 20 | ESLint & Devtools | [docs/20-eslint-devtools.md](docs/20-eslint-devtools.md) | 속성 순서 규칙 · Devtools 읽는 법 |
 | 21 | **실전 레시피 (How-To)** | [docs/21-recipes.md](docs/21-recipes.md) | 테스트 · 디버깅 · 배포 · 환경변수 · RBAC · 마이그레이션 |
+| 22 | 설계 철학 & FAQ | [docs/22-design-decisions-faq.md](docs/22-design-decisions-faq.md) | 왜 이렇게 생겼나 · routeTree.gen.ts 커밋 여부 · 자주 묻는 질문 |
 
 ## 사전 (주제별 조회)
 
@@ -179,7 +193,9 @@ Actions 탭 → `Deploy to GitHub Pages` → `Run workflow` 로 수동 실행한
 알아채지 못했다.
 
 ```bash
+pnpm check                   # 커버리지 + 링크 + typecheck 를 한 번에
 pnpm check:docs              # 누락이 있으면 이름을 출력하고 exit 1
+pnpm check:links             # 문서 내부 링크·앵커 검사
 pnpm check:docs --verbose    # 검사한 이름을 전부 출력
 ```
 

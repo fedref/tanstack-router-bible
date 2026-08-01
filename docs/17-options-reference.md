@@ -466,6 +466,173 @@ loader: async (ctx) => { … }
 
 ---
 
+---
+
+# 6부 · 타입 export 총람
+
+`@tanstack/react-router` 는 **값 100개 외에 타입만 204개**를 더 export 한다. 대부분은
+제네릭 추론을 위한 내부 헬퍼라 직접 쓸 일이 없지만, **직접 써야 하는 것들이 섞여 있어**
+구분이 필요하다.
+
+## 실제로 쓰게 되는 타입
+
+### 컴포넌트 props
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `ErrorComponentProps` | `errorComponent` 를 별도 컴포넌트로 뺄 때 | 12 |
+| `NotFoundRouteProps` | `notFoundComponent` 를 별도로 뺄 때 | 12 |
+| `RouteComponent` · `ErrorRouteComponent` · `NotFoundRouteComponent` | 컴포넌트 타입을 명시할 때 | 12 |
+| `AsyncRouteComponent` | `lazyRouteComponent` 의 반환 타입 | 09 |
+| `RouterProps` | `RouterProvider` props | 00 |
+
+```tsx
+import type { ErrorComponentProps } from '@tanstack/react-router'
+
+// 여러 라우트에서 공유하는 에러 화면
+export function AppError({ error, reset }: ErrorComponentProps) {
+  return <div>{error.message}<button onClick={reset}>재시도</button></div>
+}
+```
+
+### 링크 · 이동
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `LinkProps` | `Link` 를 감싸는 컴포넌트의 props | 16 |
+| `LinkComponent` · `LinkComponentProps` · `CreateLinkProps` | `createLink` 로 만든 컴포넌트 타입 | 16 |
+| `LinkOptions` · `ActiveLinkOptions` | `linkOptions()` 결과 타입 | 02 |
+| `ActiveOptions` | `activeOptions` 객체 | 02 |
+| `NavigateOptions` · `ToOptions` · `ToMaskOptions` | `navigate()` 인자 타입 | 02 · 15 |
+| `UseNavigateResult` | `useNavigate()` 반환 타입 | 02 |
+| `UseLinkPropsOptions` · `UseMatchRouteOptions` | 해당 훅의 옵션 | 11 · 16 |
+
+```tsx
+import type { LinkProps } from '@tanstack/react-router'
+
+// to · params · search 를 그대로 받아 넘기는 래퍼
+function NavItem({ icon, ...linkProps }: LinkProps & { icon: ReactNode }) {
+  return <Link {...linkProps}>{icon}</Link>
+}
+```
+
+### 상태 · 매치
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `ParsedLocation` | `useLocation()` 반환값 | 11 |
+| `RouteMatch` | 매치 객체를 함수로 넘길 때 | 11 |
+| `RouterState` | `useRouterState()` 반환값 | 02 · 11 |
+| `RouterEvents` · `RouterEvent` · `RouterListener` | `router.subscribe()` 콜백 | 02 |
+| `RemountDepsOptions` | `remountDeps` 콜백 인자 | 17 |
+| `ContextOptions` · `LoaderFnContext` | loader/beforeLoad 인자 | 04 · 11 |
+
+### 에러 · 리다이렉트
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `NotFoundError` | `notFound()` 반환·인자 | 12 |
+| `Redirect` · `RedirectOptions` | `redirect()` 관련 | 12 |
+
+### History
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `RouterHistory` | 커스텀 history 를 만들거나 주입할 때 | 14 |
+| `HistoryLocation` · `HistoryState` · `ParsedPath` | history 내부 값 | 14 |
+
+### Deferred
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `DeferredPromise` · `DeferredPromiseState` | `defer()` 반환 타입 | 10 |
+| `AwaitOptions` | `<Await>` props | 10 |
+| `ControlledPromise` | `createControlledPromise()` 반환 | 10 |
+
+### 설정 · 확장
+
+| 타입 | 언제 | 장 |
+|---|---|---|
+| `RouterOptions` · `RouteOptions` · `RootRouteOptions` | 옵션 객체를 변수로 뺄 때 | 17 |
+| `UpdatableRouteOptions` · `BaseRouteOptions` · `FileBaseRouteOptions` | 라우트 옵션 세부 | 17 |
+| `LazyRouteOptions` | `createLazyFileRoute` 가 받는 것 | 09 |
+| `SearchMiddleware` | 커스텀 search 미들웨어 | 13 |
+| `SearchSerializer` · `SearchParser` | 직렬화 함수 타입 | 13 |
+| `SerializationAdapter` | `createSerializationAdapter` 결과 | 13 |
+| `LocationRewrite` · `LocationRewriteFunction` | `rewrite` 옵션 | 16 |
+| `UseBlockerOpts` | `useBlocker` 옵션 | 14 |
+| `MatchRouteOptions` | `<MatchRoute>` props | 11 |
+| `RouterManagedTag` | `<Asset>` 이 받는 태그 | 16 |
+| `MetaDescriptor` | `head()` 의 meta 항목 | 16 |
+
+### declaration merging 으로 확장하는 것
+
+**이 타입들은 읽는 용도가 아니라 우리가 늘리는 용도**다. 05장의 `Register` 와 같은 방식이다.
+
+| 타입 | 무엇을 확장하나 | 장 |
+|---|---|---|
+| `Register` | 라우터 인스턴스를 전역에 등록 (필수) | 05 |
+| `StaticDataRouteOption` | `staticData` 에 필수 필드를 강제 | 17 |
+| `UpdatableRouteOptionsExtensions` | 라우트 옵션을 직접 추가 | — |
+| `RouterOptionsExtensions` | 라우터 옵션을 직접 추가 | — |
+| `SerializableExtensions` · `SerializerExtensions` | 직렬화 가능 타입을 늘림 | 13 |
+| `RouteMatchExtensions` | 매치 객체에 필드 추가 | — |
+
+```ts
+// staticData 에 title 을 필수로 만든다 — 빠뜨린 라우트가 타입 에러가 된다
+declare module '@tanstack/react-router' {
+  interface StaticDataRouteOption {
+    title: string
+  }
+}
+```
+
+### 타입 유틸
+
+| 타입 | 하는 일 |
+|---|---|
+| `Expand` | 교차 타입을 펼쳐 IDE 툴팁을 읽기 쉽게 |
+| `Assign` · `MergeAll` · `IntersectAssign` | 객체 타입 병합 |
+| `Constrain` · `ConstrainLiteral` | 리터럴 타입 제약 |
+| `LooseReturnType` · `LooseAsyncReturnType` | 반환 타입 추출 |
+| `Validator` · `ValidatorAdapter` · `ValidatorObj` | zod/valibot 등 검증기 어댑터 |
+
+## 나머지 — 내부 추론 헬퍼
+
+위 표에 없는 **124개**는 이 문서에서 이름을 다루지 않는다. 성격은 두 가지다.
+
+**① 제네릭 추론용 (약 68개)** — `AnyRoute` · `AnyRouter` · `ResolveParams` ·
+`InferFullSearchSchema` · `MakeRouteMatchUnion` 처럼 `Any` · `Resolve` · `Infer` ·
+`Make` · `Trim` · `Constrain` 으로 시작하는 이름들이다.
+
+**② 특정 prop 의 타입 계산용 (약 56개)** — `RelativeToPath` · `AbsoluteToPath` ·
+`ToSubOptions` · `SearchParamOptions` · `PathParamOptions` 같은 것들로,
+`<Link to>` 의 자동완성을 만들어 내는 타입들이다. 우리가 `to="/posts/$postId"` 를 칠 때
+자동완성이 뜨는 것이 이들의 작품이지만, **직접 import 할 일은 없다.**
+
+> **경계를 분명히 해 둔다.** 이 저장소는 **값 export 100개와 옵션 192개를 100% 다루지만,
+> 타입 전용 export 204개는 전부 다루지 않는다.** 위 표의 80개가 "직접 쓰게 되는 것"이고
+> 나머지 124개는 내부 추론용이라고 판단해 이름만 이 절에서 언급한다.
+>
+> 그중 하나가 필요해지는 순간이 오면 — 대개 **제네릭 유틸을 직접 만들 때다** — 아래
+> 명령으로 전체 목록을 뽑아 타입 정의를 직접 읽는 편이 빠르다.
+
+앱 코드에서 직접 쓸 일은 거의 없지만, **제네릭 유틸을 직접 만들 때** 필요해진다.
+
+```ts
+import type { AnyRouter, RegisteredRouter, RouteIds } from '@tanstack/react-router'
+
+// 등록된 라우터의 라우트 id 만 받는 함수
+function trackPage(routeId: RouteIds<RegisteredRouter['routeTree']>) { … }
+```
+
+전체 목록이 필요하면 타입 정의를 직접 본다.
+
+```bash
+grep -oE 'export type \{[^}]*\}' \
+  apps/bible/node_modules/@tanstack/react-router/dist/esm/index.d.ts
+```
+
 ## 이 문서를 최신으로 유지하는 법
 
 버전을 올린 뒤에는 README에 적힌 커버리지 스크립트를 돌린다. 새 API가 추가되면 누락으로

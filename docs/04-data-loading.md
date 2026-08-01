@@ -70,10 +70,101 @@ export const Route = createFileRoute('/data/deps')({
 
 - **staleTime**: 데이터가 "신선하다"고 볼 시간. 이 안에 같은 deps 로 돌아오면 loader 를 다시
   돌리지 않고 캐시를 쓴다. (기본 0 → 이동마다 새로 로드, 단 preload 는 캐시된다.)
-- **gcTime**: 안 쓰는 캐시를 메모리에서 버리기까지의 시간.
+- **gcTime**: 안 쓰는 캐시를 메모리에서 버리기까지의 시간. 기본 30분.
 
 → 실행: `/data/deps` 에서 category·page 를 바꾸며 "불러온 시각"을 관찰하라. deps 를 바꾸면
 갱신되지만, 5초 내 같은 조합이면 시각이 그대로다(재로드 안 함).
+
+### `loaderDeps` 에는 실제로 쓰는 것만 넣는다
+
+공식 문서가 강조하는 대목이다.
+
+```tsx
+// ❌ search 를 통째로 넘긴다 → 관계없는 값이 바뀌어도 loader 가 다시 돈다
+loaderDeps: ({ search }) => search,
+
+// ✅ loader 안에서 실제로 쓰는 것만
+loaderDeps: ({ search }) => ({ category: search.category, page: search.page }),
+```
+
+`?theme=dark` 같은 UI 상태가 search 에 섞여 있으면, 통째로 넘겼을 때 테마만 바꿔도
+서버 요청이 나간다. **deps 는 캐시 키**라는 점을 기억하면 판단이 쉽다.
+
+### `shouldReload` — 시간이 아닌 논리로 제어하기
+
+`staleTime` 이 "몇 초 안에는 재사용"이라면, `shouldReload` 는 "이런 조건이면 다시
+로드"다. 둘은 함께 동작한다.
+
+```tsx
+export const Route = createFileRoute('/reports')({
+  loader: fetchReport,
+  // 항상 다시 로드
+  shouldReload: true,
+  // 또는 조건부 — cause 로 판단한다 (11장)
+  shouldReload: ({ cause }) => cause === 'enter',
+})
+```
+
+### `staleReloadMode` — stale 일 때 어떻게 보여줄까
+
+`staleTime` 이 지난 데이터를 다시 받는 동안 화면을 어떻게 할지 정한다.
+
+| 값 | 동작 |
+|---|---|
+| `'background'` | **낡은 데이터를 먼저 보여 주고** 뒤에서 갱신 |
+| `'blocking'` | 새 데이터가 올 때까지 기다린다 (pendingComponent 표시) |
+
+```tsx
+createRouter({ routeTree, defaultStaleReloadMode: 'background' })
+```
+
+목록 화면처럼 "일단 뭐라도 보이는 게 나은" 곳은 `background`, 잔액·재고처럼 **틀린 값을
+잠깐이라도 보여 주면 안 되는** 곳은 `blocking` 이다.
+
+### preload 전용 캐시 옵션
+
+프리로드(02장)는 일반 이동과 **별도의 캐시 정책**을 가진다.
+
+| 옵션 | 기본값 | 뜻 |
+|---|---|---|
+| `preloadStaleTime` | `30_000` | 프리로드한 데이터의 신선 기간 |
+| `preloadGcTime` | `gcTime` 따름 | 프리로드 캐시 수거 시간 |
+
+기본값이 30초인 이유는 **hover 를 반복할 때마다 요청이 나가지 않게** 하기 위해서다.
+링크 위에서 마우스를 흔들어도 30초 안에는 한 번만 받는다.
+
+### 캐시를 아예 끄고 싶다면
+
+TanStack Query(07장)처럼 **외부 캐시를 따로 두는 경우**, 라우터 캐시가 오히려 방해가
+된다. 두 겹으로 캐시하면 어느 쪽이 최신인지 헷갈린다.
+
+```tsx
+export const Route = createFileRoute('/posts')({
+  loader: ({ context }) => context.queryClient.ensureQueryData(postsQuery),
+  gcTime: 0,              // 라우터 캐시를 남기지 않는다
+  shouldReload: false,    // 라우터가 스스로 재로드하지 않는다
+})
+```
+
+라우터는 "loader 를 부르는 일"만 하고 **캐시 판단은 Query 에 맡긴다.** 라우터 전역으로는
+`defaultPreloadStaleTime: 0` 을 주면 프리로드 때도 매번 loader 가 불려 외부 캐시가 판단을
+가져간다.
+
+### `abortController` — 취소된 이동의 요청 정리
+
+loader 인자로 들어온다. 사용자가 빠르게 다른 링크로 옮기면 이전 요청은 쓸모없어진다.
+
+```tsx
+loader: async ({ params, abortController }) => {
+  const res = await fetch(`/api/posts/${params.postId}`, {
+    signal: abortController.signal,   // 이동이 취소되면 fetch 도 취소된다
+  })
+  return res.json()
+}
+```
+
+넘기지 않아도 동작은 하지만, 취소된 요청이 계속 살아남아 네트워크를 점유한다. 자세한
+내용은 11장에서 다룬다.
 
 ## Mutations · invalidate
 

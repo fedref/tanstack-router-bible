@@ -54,7 +54,7 @@
 | `search: (prev) => ...` | search 를 상태처럼 갱신 | [02](02-navigation.md#2-search-를-상태처럼-다루기-updater-함수) | `/navigation/imperative` |
 | `replace: true` | 히스토리 교체(뒤로가기 안 남김) | [02](02-navigation.md#2-search-를-상태처럼-다루기-updater-함수) | `/navigation/imperative` |
 | `linkOptions()` | 재사용 가능한 타입 안전 링크 설정 | [02](02-navigation.md#3-linkoptions--재사용-가능한-타입-안전-링크-설정) | `/navigation/link` |
-| `<Navigate>` / `redirect()` | 선언형/로직 리다이렉트 | [02](02-navigation.md#4-조연들) | (06에서 실사용) |
+| `<Navigate>` / `redirect()` | 선언형/로직 리다이렉트 | [02](02-navigation.md#8-조연들) | (06에서 실사용) |
 | `preload` / `defaultPreload` | 클릭 전 미리 로드 | [02](02-navigation.md#preloading--클릭-전에-미리-받기) | `/navigation/preloading` |
 | `router.subscribe(type, cb)` | 이동 생명주기 이벤트 구독 | [02](02-navigation.md#router-events--이동-생명주기-관찰) | `/navigation/events` |
 | `useRouterState({ select })` | 라우터 상태 구독 (status 등) | [02](02-navigation.md#router-events--이동-생명주기-관찰) | `/navigation/events` |
@@ -64,7 +64,7 @@
 | 항목 | 한 줄 | 문서 | 예제 |
 |------|-------|------|------|
 | Path Params (`$id`) | 경로 조각 → `params.*` | [03](03-params.md#path-params) | `/params/path/$userId` |
-| **선택적 param** `{-$id}` | 있어도 되고 없어도 되는 세그먼트 | [03](03-params.md#선택적-path-param--param) | (19장 i18n) |
+| **선택적 param** `{-$id}` | 있어도 되고 없어도 되는 세그먼트 | [03](03-params.md#선택적-path-param---param) | (19장 i18n) |
 | **prefix** `pre-{$id}` | 세그먼트 앞부분 고정 | [03](03-params.md#prefix--suffix--세그먼트-일부만-변수로) | — |
 | **suffix** `{$id}.txt` | 세그먼트 뒷부분 고정 | [03](03-params.md#prefix--suffix--세그먼트-일부만-변수로) | — |
 | **splat `_splat`** | 남은 경로 전부. 변수명 고정 | [03](03-params.md#splat--남은-경로-전부-_splat) | — |
@@ -152,10 +152,10 @@
 
 | 항목 | 한 줄 | 문서 | 예제 |
 |------|-------|------|------|
-| `autoCodeSplitting` | 플러그인 옵션 한 줄로 전체 자동 분할 | [09](09-code-splitting.md#-최소-예제--플러그인에-한-줄) | `apps/bible/vite.config.ts` |
-| `createLazyFileRoute` | 컴포넌트만 별도 파일(`.lazy.tsx`)로 | [09](09-code-splitting.md#-lazytsx--파일을-둘로-나누는-방식) | (코드 조각) |
+| `autoCodeSplitting` | 플러그인 옵션 한 줄로 전체 자동 분할 | [09](09-code-splitting.md#①-최소-예제--플러그인에-한-줄) | `apps/bible/vite.config.ts` |
+| `createLazyFileRoute` | 컴포넌트만 별도 파일(`.lazy.tsx`)로 | [09](09-code-splitting.md#②-lazytsx--파일을-둘로-나누는-방식) | (코드 조각) |
 | `createLazyRoute` | 코드기반 라우팅용 lazy | [09](09-code-splitting.md#코드기반-라우팅이라면-createlazyroute) | — |
-| `lazyRouteComponent` | 컴포넌트 단위 지연 로드 (preload 연동) | [09](09-code-splitting.md#-lazyroutecomponent--컴포넌트-단위로-직접) | — |
+| `lazyRouteComponent` | 컴포넌트 단위 지연 로드 (preload 연동) | [09](09-code-splitting.md#③-lazyroutecomponent--컴포넌트-단위로-직접) | — |
 | `lazyFn` | 함수(loader) 지연 로드 | [09](09-code-splitting.md#lazyfn--loader를-늦게-받기) | — |
 | `FileRouteLoader` ⚠️ | deprecated — loader는 본체 파일에 | [09](09-code-splitting.md#lazyfn--loader를-늦게-받기) | — |
 | `codeSplitGroupings` | 라우트별 분할 단위 지정 | [09](09-code-splitting.md#라우트-하나만--codesplitgroupings) | — |
@@ -178,7 +178,7 @@
 |------|-------|------|------|
 | `useMatch({ from })` | 매치 하나 + 그 상태 전부 | [11](11-match-api.md#usematch--매치-하나-읽기) | `/matches` |
 | `useMatches()` | 매치 전부 → 브레드크럼 | [11](11-match-api.md#usematches--전부-읽기) | `/matches` |
-| `isMatch()` | 매치 타입 가드 (filter 함정 주의) | [11](11-match-api.md#대표-용도--브레드크럼) | `/matches` |
+| `isMatch()` | 매치 타입 가드 (filter 함정 주의) | [11](11-match-api.md#대표-용도-①-브레드크럼) | `/matches` |
 | `useParentMatches()` | 상위 매치들 (부모 쪽) | [11](11-match-api.md#useparentmatches--usechildmatches) | — |
 | `useChildMatches()` | 하위 매치들 (자식 쪽) | [11](11-match-api.md#useparentmatches--usechildmatches) | — |
 | `useMatchRoute()` | "지금 여기 있나?" 판정 함수 | [11](11-match-api.md#usematchroute--matchroute--지금-여기-있나-판정) | `/matches` |
@@ -189,21 +189,21 @@
 | `useCanGoBack()` | 뒤로 갈 수 있나 | [11](11-match-api.md#usecangoback--뒤로-갈-수-있나) | `/matches` |
 | `abortController` | loader 인자 — 요청 취소 | [11](11-match-api.md#abortcontroller--요청-취소) | — |
 | `cause` | `'preload'`\|`'enter'`\|`'stay'` | [11](11-match-api.md#cause--왜-실행됐나) | — |
-| `structuralSharing` | select 결과 참조 유지 | [11](11-match-api.md#structuralsharing--리렌더를-줄이는-또-하나의-장치) | — |
+| `structuralSharing` | select 결과 참조 유지 | [11](11-match-api.md#structuralsharing--둘을-합칠-때) | — |
 
 ## 에러 · NotFound 경계 (Chapter 12)
 
 | 항목 | 한 줄 | 문서 | 예제 |
 |------|-------|------|------|
 | Error/NotFound/Redirect 구분 | 셋은 다르게 다뤄야 한다 | [12](12-error-boundaries.md#한-줄-정의--언제-쓰나) | `/data/basics?fail=true` |
-| `errorComponent` | `{ error, info, reset }` | [12](12-error-boundaries.md#-error--errorcomponent) | `/data/basics?fail=true` |
+| `errorComponent` | `{ error, info, reset }` | [12](12-error-boundaries.md#①-error--errorcomponent) | `/data/basics?fail=true` |
 | `errorComponent: null` | 경계 해제 → 부모로 전파 | [12](12-error-boundaries.md#errorcomponent-null--경계를-없애기) | — |
 | `ErrorComponent` | 기본 제공 에러 화면 | [12](12-error-boundaries.md#errorcomponent--기본-제공-컴포넌트) | — |
 | `onError` / `onCatch` | 로깅·모니터링 훅 | [12](12-error-boundaries.md#onerror--잡기-전에-관찰하기) | — |
-| `notFound({ data, routeId })` | 없음 처리 + 경계 지정 | [12](12-error-boundaries.md#-notfound--notfound-와-notfoundcomponent) | `/auth/notfound` |
+| `notFound({ data, routeId })` | 없음 처리 + 경계 지정 | [12](12-error-boundaries.md#②-notfound--notfound-와-notfoundcomponent) | `/auth/notfound` |
 | `notFoundMode` | `'fuzzy'`(기본) \| `'root'` | [12](12-error-boundaries.md#notfoundmode--어디서-잡을지의-전역-정책) | — |
 | `DefaultGlobalNotFound` | 기본 404 화면 | [12](12-error-boundaries.md#defaultglobalnotfound--기본-404-화면) | — |
-| `isRedirect` / `isNotFound` | 정상 흐름을 에러로 집계하지 않기 | [12](12-error-boundaries.md#-redirect--그리고-판별-함수들) | — |
+| `isRedirect` / `isNotFound` | 정상 흐름을 에러로 집계하지 않기 | [12](12-error-boundaries.md#③-redirect--그리고-판별-함수들) | — |
 | `<CatchBoundary>` | 영역 단위 에러 경계(`getResetKey`) | [12](12-error-boundaries.md#catchboundary) | `/deferred` |
 | `<CatchNotFound>` | 영역 단위 404 경계 | [12](12-error-boundaries.md#catchnotfound) | — |
 | `disableGlobalCatchBoundary` | 전역 경계 끄기 | [12](12-error-boundaries.md#disableglobalcatchboundary) | — |
@@ -246,10 +246,10 @@
 | `createRouteMask` | 전역 마스킹 규칙 | [15](15-masking-scroll.md#라우터-전역-마스킹--createroutemask) | — |
 | `unmaskOnReload` | 새로고침 시 마스크 해제 | [15](15-masking-scroll.md#unmaskonreload--새로고침-시-동작) | — |
 | `scrollRestoration` | 뒤로가기 시 스크롤 복원 | [15](15-masking-scroll.md#최소-예제--옵션-한-줄) | `main.tsx` |
-| `getScrollRestorationKey` | 스크롤 저장 키 (기본 `href`) | [15](15-masking-scroll.md#-getscrollrestorationkey--언제-바꾸나) | — |
-| `scrollToTopSelectors` | 내부 패널도 맨 위로 | [15](15-masking-scroll.md#-scrolltotopselectors) | — |
+| `getScrollRestorationKey` | 스크롤 저장 키 (기본 `href`) | [15](15-masking-scroll.md#①-getscrollrestorationkey--언제-바꾸나) | — |
+| `scrollToTopSelectors` | 내부 패널도 맨 위로 | [15](15-masking-scroll.md#③-scrolltotopselectors) | — |
 | `useElementScrollRestoration` | 개별 요소 스크롤 복원 | [15](15-masking-scroll.md#useelementscrollrestoration--개별-요소-복원) | — |
-| `defaultViewTransition` | 전환 애니메이션 | [15](15-masking-scroll.md#최소-예제-1) | — |
+| `defaultViewTransition` | 전환 애니메이션 | [15](15-masking-scroll.md#최소-예제) | — |
 | View Transition `types` | 전환 종류별 CSS 분기 | [15](15-masking-scroll.md#types--전환-종류-구분하기) | — |
 | `defaultHashScrollIntoView` | `#hash` 로 스크롤 | [15](15-masking-scroll.md#defaulthashscrollintoview) | — |
 
@@ -259,8 +259,8 @@
 |------|-------|------|------|
 | `createLink()` | 내 컴포넌트를 타입 안전 링크로 | [16](16-custom-link-utils.md#createlink--컴포넌트를-링크로-승격) | — |
 | `useLinkProps()` | `<a>` props만 뽑아 쓰기 | [16](16-custom-link-utils.md#uselinkprops--props만-뽑아-쓰기) | — |
-| `<HeadContent>` 🚫 | 라우트별 `<head>` 태그 렌더 | [16](16-custom-link-utils.md#headcontent----head--태그-관리) | SSR 전용 |
-| `<Scripts>` / `<Asset>` / `<ScriptOnce>` 🚫 | 스크립트·태그 렌더 (FOUC 방지) | [16](16-custom-link-utils.md#scripts--스크립트-렌더) | SSR 전용 |
+| `<HeadContent>` 🚫 | 라우트별 `<head>` 태그 렌더 | [16](16-custom-link-utils.md#headcontent---head-태그-관리) | SSR 전용 |
+| `<Scripts>` / `<Asset>` / `<ScriptOnce>` 🚫 | 스크립트·태그 렌더 (FOUC 방지) | [16](16-custom-link-utils.md#scripts---스크립트-렌더) | SSR 전용 |
 | `useTags()` 🚫 | 현재 매치의 태그 목록 | [16](16-custom-link-utils.md#usetags) | SSR 전용 |
 | `<ClientOnly>` / `useHydrated()` 🚫 | 서버 렌더 제외 | [16](16-custom-link-utils.md#clientonly--usehydrated) | SSR 전용 |
 | `RouterContextProvider` | 라우터 컨텍스트만 제공 | [16](16-custom-link-utils.md#routercontextprovider) | — |
@@ -284,11 +284,11 @@
 | loader/beforeLoad 인자 총람 | 14개 필드 | [17](17-options-reference.md#5부--loader--beforeload-인자-전수) |
 | `createRootRoute` | 루트 라우트 생성 | [17](17-options-reference.md#createrootroute--createrootroutewithcontextt) |
 | `rootRouteWithContext` ⚠️ | deprecated → `createRootRouteWithContext` | [17](17-options-reference.md#createrootroute--createrootroutewithcontextt) |
-| `shellComponent` 🚫 | 루트 전용 — SSR 문서 껍데기 | [17](17-options-reference.md#루트-전용-옵션--shellcomponent-) |
+| `shellComponent` 🚫 | 루트 전용 — SSR 문서 껍데기 | [17](17-options-reference.md#루트-전용-옵션--shellcomponent) |
 | `createRoute` | 코드기반 자식 라우트 (`getParentRoute` 필수) | [17](17-options-reference.md#createroute) |
 | `RouteApi` / `getRouteApi` | id 문자열로 라우트 훅 접근 | [17](17-options-reference.md#routeapi--getrouteapi) |
 | `FileRoute` ⚠️ / `LazyRoute` | deprecated 클래스 / lazy 반환 타입 | [17](17-options-reference.md#fileroute--lazyroute) |
-| `createRouterConfig` 🚫 | 직렬화·SSR 설정 묶음 | [17](17-options-reference.md#createrouterconfig-) |
+| `createRouterConfig` 🚫 | 직렬화·SSR 설정 묶음 | [17](17-options-reference.md#createrouterconfig) |
 | `staticData` | 라우트에 임의 메타 붙이기 | [17](17-options-reference.md#staticdata--라우트에-메타-붙이기) |
 | `shouldReload` | 재검증 논리 제어 | [17](17-options-reference.md#shouldreload--재검증-제어) |
 | `remountDeps` | 컴포넌트 재마운트 조건 | [17](17-options-reference.md#remountdeps--컴포넌트-재마운트-제어) |
@@ -357,3 +357,45 @@
 | 401 vs 403 | 미인증 → `/login`, 권한없음 → `/unauthorized` | [21](21-recipes.md#401과-403을-구분한다) | 12 |
 | UI 라이브러리 통합 | shadcn · MUI · Chakra · Framer Motion | [21](21-recipes.md#9-ui-라이브러리-통합) | 16 |
 | React Router 이사 | 개념 대응표 + 점진 이전 전략 | [21](21-recipes.md#10-react-router에서-이사하기) | 01 · 18 |
+
+## 설계 철학 & FAQ (Chapter 22)
+
+| 항목 | 한 줄 | 문서 |
+|------|-------|------|
+| 출발점 | Nozzle 대시보드의 search params 요구에서 시작 | [22](22-design-decisions-faq.md#출발점--대시보드의-search-params) |
+| JSX 라우트를 쓰지 않는 이유 | TypeScript 가 라우트를 추론하지 못한다 | [22](22-design-decisions-faq.md#jsx로-라우트를-정의할-수-없는-이유) |
+| `Register` 선언이 필요한 이유 | 모듈 선언 병합으로 앱 전역 타입 추론을 켠다 | [22](22-design-decisions-faq.md#register-선언이-필요한-이유) |
+| 파일기반을 권하는 이유 | 보일러플레이트를 플러그인이 대신 쓴다 | [22](22-design-decisions-faq.md#왜-파일기반을-권하나) |
+| 다른 라우터와의 비교 | Next.js · Remix/React Router 와의 트레이드오프 | [22](22-design-decisions-faq.md#다른-라우터-대신-이걸-쓸-이유가-있나) |
+| 프레임워크인가 | 아니다. 풀스택은 TanStack Start | [22](22-design-decisions-faq.md#프레임워크인가) |
+| **`routeTree.gen.ts` 커밋** | 공식은 "커밋하라". 이 저장소는 따르지 않는다 | [22](22-design-decisions-faq.md#routetreegents-를-커밋해야-하나) |
+| 루트 조건부 렌더 | 불가능. Layout/Pathless 라우트를 쓴다 | [22](22-design-decisions-faq.md#루트-라우트를-조건부로-렌더할-수-있나) |
+| Parallel Routes | **공식 문서 미작성** 상태 | [22](22-design-decisions-faq.md#parallel-routes-는-어떻게-쓰나) |
+
+## 번들러별 설치 (Chapter 18 보강)
+
+| 번들러 | import 경로 | 문서 |
+|--------|-------------|------|
+| Vite | `@tanstack/router-plugin/vite` | [18](18-generator-config.md#vite-이-저장소가-쓰는-방식) |
+| Rspack / Rsbuild | `@tanstack/router-plugin/rspack` | [18](18-generator-config.md#rspack--rsbuild) |
+| Webpack | `@tanstack/router-plugin/webpack` | [18](18-generator-config.md#webpack) |
+| Esbuild | `@tanstack/router-plugin/esbuild` | [18](18-generator-config.md#esbuild) |
+| 번들러 없음 | 코드기반 라우팅으로 전환 | [18](18-generator-config.md#번들러가-없을-때--수동-설치) |
+
+## 타입 export (Chapter 17 · 6부)
+
+값 100개 외에 **타입만 204개**가 export 된다. 직접 쓰게 되는 80개는 아래 갈래로 정리돼
+있고, 나머지 124개는 제네릭 추론용 내부 헬퍼다.
+
+| 갈래 | 대표 타입 | 문서 |
+|------|-----------|------|
+| 컴포넌트 props | `ErrorComponentProps` · `NotFoundRouteProps` · `RouteComponent` | [17](17-options-reference.md#컴포넌트-props) |
+| 링크 · 이동 | `LinkProps` · `NavigateOptions` · `ActiveOptions` · `LinkComponent` | [17](17-options-reference.md#링크--이동) |
+| 상태 · 매치 | `ParsedLocation` · `RouteMatch` · `RouterState` · `RouterEvents` | [17](17-options-reference.md#상태--매치) |
+| 에러 · 리다이렉트 | `NotFoundError` · `Redirect` · `RedirectOptions` | [17](17-options-reference.md#에러--리다이렉트) |
+| History | `RouterHistory` · `HistoryLocation` · `HistoryState` | [17](17-options-reference.md#history) |
+| Deferred | `DeferredPromise` · `AwaitOptions` · `ControlledPromise` | [17](17-options-reference.md#deferred) |
+| 설정 · 확장 | `SearchMiddleware` · `SerializationAdapter` · `UseBlockerOpts` | [17](17-options-reference.md#설정--확장) |
+| **declaration merging 대상** | `Register` · `StaticDataRouteOption` · `SerializableExtensions` | [17](17-options-reference.md#declaration-merging-으로-확장하는-것) |
+| 타입 유틸 | `Expand` · `Assign` · `Validator` | [17](17-options-reference.md#타입-유틸) |
+| 내부 추론 헬퍼 (124개) | `AnyRoute` · `ResolveParams` · `RelativeToPath` | [17](17-options-reference.md#나머지--내부-추론-헬퍼) |

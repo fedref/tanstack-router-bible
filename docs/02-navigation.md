@@ -100,12 +100,114 @@ const productLink = linkOptions({
 <Link {...productLink}>상품 1</Link>   // to/params 가 여기서도 타입 검증됨
 ```
 
-### 4) 조연들
+### 4) 상대 경로 이동 — `from` · `.` · `..`
+
+지금까지는 `to` 에 항상 절대 경로를 적었다. **현재 위치를 기준으로** 움직일 수도 있다.
+
+```tsx
+// 현재 위치를 다시 로드 (search 만 바꿀 때 유용)
+<Link to="." search={{ page: 2 }}>2페이지</Link>
+
+// 부모 라우트로
+<Link to="..">뒤로</Link>
+
+// 기준점을 명시 — 컴포넌트가 어느 라우트에 있든 이 경로 기준으로 계산된다
+<Link from="/posts/$postId" to="../edit">수정</Link>
+```
+
+`from` 을 생략하면 **루트(`/`) 가 기준**이다. 즉 `to="../edit"` 만 쓰면 현재 라우트가
+아니라 루트 기준으로 해석되어 엉뚱한 곳으로 간다. **상대 경로를 쓸 때는 `from` 을 함께
+적는 습관**을 들이는 편이 안전하다.
+
+`useNavigate` 에서도 같다.
+
+```tsx
+const navigate = useNavigate({ from: '/posts/$postId' })
+navigate({ to: '../edit' })
+```
+
+#### params 상속
+
+상대 이동에서는 현재 params 를 물려받을지 정할 수 있다.
+
+```tsx
+// 현재 params 를 그대로 유지 (postId 가 살아 있다)
+<Link from="/posts/$postId" to="./comments" params={{}} />
+
+// 특정 param 을 제거
+<Link from="/posts/$postId" to="/posts" params={{ postId: undefined }} />
+```
+
+공용 컴포넌트(예: 목록/상세 어디서나 쓰는 툴바)를 만들 때 이 방식이 유용하다. 절대
+경로를 하드코딩하면 그 컴포넌트를 다른 라우트에서 재사용할 수 없다.
+
+### 5) hash · state — URL의 나머지 두 조각
+
+`params` · `search` 와 마찬가지로 **값 또는 updater 함수**를 받는다.
+
+```tsx
+<Link to="/docs" hash="installation">설치 섹션으로</Link>
+
+// history state — URL에 드러나지 않는 값을 실어 보낸다
+<Link to="/checkout" state={{ from: 'cart' }}>결제</Link>
+```
+
+읽을 때는 `useLocation()` 을 쓴다(11장).
+
+```tsx
+const hash = useLocation({ select: (l) => l.hash })
+const state = useLocation({ select: (l) => l.state })
+```
+
+**`state` 는 URL에 나타나지 않으므로 새로고침·공유에서 사라진다.** 없어도 화면이
+성립해야 하는 값(어디서 왔는지 같은 힌트)에만 쓴다. 유지되어야 하는 값은 `search` 에
+둔다(03장).
+
+`hash` 로 이동하면 해당 id 요소로 스크롤된다. 이 동작은 `hashScrollIntoView` 로 끌 수
+있다(15장).
+
+### 6) `reloadDocument` — SPA 이동을 포기하기
+
+```tsx
+<Link to="/legacy-page" reloadDocument>구버전 페이지</Link>
+```
+
+라우터가 처리하지 않고 **브라우저 전체 새로고침**으로 이동한다. 같은 도메인에 라우터
+밖의 레거시 페이지가 섞여 있을 때 쓴다. SPA 의 이점을 버리는 것이므로 필요한 곳에만
+쓴다.
+
+외부 사이트로 갈 때는 `to` 대신 **`href`** 를 쓴다.
+
+```tsx
+<Link href="https://tanstack.com">공식 사이트</Link>
+```
+
+### 7) `data-status` — CSS로 active 스타일링
+
+`activeProps` 를 쓰지 않고 CSS만으로 처리할 수도 있다. 라우터가 활성 링크에
+`data-status="active"` 를 자동으로 붙인다.
+
+```css
+a[data-status='active'] {
+  font-weight: 700;
+  color: var(--primary);
+}
+```
+
+Tailwind 라면 `data-[status=active]:font-bold` 형태로 쓴다. 링크마다 `activeProps` 를
+적지 않아도 되므로, 디자인 시스템에 규칙을 한 번 심어 두기 좋다.
+
+### 8) 조연들
 
 | API | 언제 |
 |-----|------|
 | `<Navigate to="..." />` | 렌더 시점에 즉시 리다이렉트하는 컴포넌트 |
 | `redirect({ to })` | `beforeLoad`/`loader` 안에서 **던져서** 이동 (Chapter 06 인증) |
+| `router.navigate({ to })` | 컴포넌트 밖에서 이동 (`useRouter()` 로 접근) |
+| `disabled` | `href` 없이 렌더 — 클릭해도 이동하지 않는다 |
+| `ignoreBlocker` | 이동 차단(14장)을 무시하고 강제 이동 |
+| `mask` | 주소창에 다른 URL 을 보여 준다 (15장) |
+| `viewTransition` | 전환 애니메이션 (15장) |
 
 ## Preloading — 클릭 전에 미리 받기
 
