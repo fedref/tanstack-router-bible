@@ -3,6 +3,21 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
+    # 배포 산출물에 영향을 주는 경로만 트리거한다.
+    # docs/ · README.md · CLAUDE.md · scripts/ 만 바뀐 커밋에서는 워크플로가 아예
+    # 실행되지 않는다(스킵이 아니라 미실행이므로 Actions 목록에도 남지 않는다).
+    #
+    # ⚠️ 여기 없는 경로가 빌드에 영향을 주게 되면 이 목록도 함께 갱신한다.
+    #    빠뜨리면 "고쳤는데 배포가 안 되는" 상태가 되고, 이건 조용히 잘못된다.
+    #    apps/playground 는 배포 대상이 아니므로 일부러 제외한다.
+    paths:
+      - 'apps/bible/**'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
+      - 'package.json'
+      - '.github/workflows/deploy-pages.yml'
+  # paths 와 무관하게 언제든 수동 배포할 수 있다.
+  # (필터 때문에 배포가 안 됐을 때의 탈출구)
   workflow_dispatch:
 
 permissions:
