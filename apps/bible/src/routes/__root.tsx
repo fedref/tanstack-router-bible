@@ -142,6 +142,54 @@ const NAV: { label: string; items: NavItem[] }[] = [
       { title: '미니 카탈로그', to: '/kitchen-sink', icon: Sparkles, exact: true },
     ],
   },
+  {
+    label: '09 · 코드 스플리팅',
+    items: [
+      { title: '자동 분할', to: '/code-splitting', icon: Zap, exact: true },
+      { title: '수동 분할 · lazy', to: '/code-splitting/manual', icon: Layers, exact: true },
+    ],
+  },
+  {
+    label: '10 · Deferred',
+    items: [{ title: 'Await · 스트리밍', to: '/deferred', icon: Radio, exact: true }],
+  },
+  {
+    label: '11 · Match API',
+    items: [{ title: '매치 배열 · 상태', to: '/matches', icon: Target, exact: true }],
+  },
+  {
+    label: '12 · 에러 · NotFound',
+    items: [
+      { title: '세 흐름 구분', to: '/errors', icon: Shield, exact: true },
+      { title: 'CatchBoundary', to: '/errors/boundary', icon: Puzzle, exact: true },
+    ],
+  },
+  {
+    label: '13 · Search 미들웨어',
+    items: [{ title: 'retain · strip', to: '/search-mw', icon: FunnelPlus, exact: true }],
+  },
+  {
+    label: '14 · 차단 & History',
+    items: [
+      { title: 'useBlocker', to: '/blocking', icon: Shield, exact: true },
+      { title: 'History 종류', to: '/blocking/history', icon: RouteIcon, exact: true },
+    ],
+  },
+  {
+    label: '15 · Masking · 스크롤',
+    items: [
+      { title: 'Route Masking', to: '/masking', icon: Sparkles, exact: true },
+      { title: '스크롤 복원', to: '/masking/scroll', icon: SlidersHorizontal, exact: true },
+    ],
+  },
+  {
+    label: '16 · 커스텀 Link',
+    items: [{ title: 'createLink · props', to: '/custom-link', icon: Link2, exact: true }],
+  },
+  {
+    label: '17–21 · 문서 전용',
+    items: [{ title: '옵션 총람 · 설정 · 레시피', to: '/reference', icon: BookOpen, exact: true }],
+  },
 ]
 
 function RootLayout() {
